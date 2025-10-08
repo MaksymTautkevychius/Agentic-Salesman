@@ -1,1 +1,1 @@
-# Automated AI Agent for WhatsApp converstations
+# Automated AI Agent for WhatsApp conversations
