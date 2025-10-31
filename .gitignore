@@ -211,5 +211,5 @@ rec.in
 
 
 # Folders for saving images and audio data
-.received_photos
-.received_audio
+received_photos
+received_audio
