@@ -1,9 +1,14 @@
-from telegram import Update
+import os, sys
+from pathlib import Path
+
+from telegram import Update 
 from dotenv import load_dotenv, find_dotenv
 from typing import Final
 from io import BytesIO
-import os
-from pathlib import Path
+
+from src.models.Input import InputLevel, Type
+from src.pre_processing.InputProcessing import add_new_data
+
 from telegram.ext import (
     ApplicationBuilder, 
     CommandHandler, 
@@ -11,7 +16,6 @@ from telegram.ext import (
     MessageHandler, 
     filters
 )
-
 
 path = find_dotenv()
 load_dotenv(path)
@@ -32,25 +36,25 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_text = update.message.text
     chat_id = update.effective_chat.id
 
-    messages.append({
-        'type': 'text',
-        'user': update.effective_user.username,
-        'user_id': update.effective_user.id,
-        'chat_id': chat_id,
-        'content': user_text
-    })
-
+    input_data = InputLevel(
+        chat_id=chat_id,
+        user_id=update.effective_user.id,
+        user=update.effective_user.username,
+        type=Type.TEXT, 
+        message=update.message.text,
+        image=None  
+    )
+    add_new_data(input_data)
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle photo messages with optional caption"""
     try:
-       
         photo = update.message.photo[-1]
         caption_text = update.message.caption or "No caption"
         chat_id = update.effective_chat.id
         file = await context.bot.get_file(photo.file_id)
-        filename = f"{update.effective_chat.id}.jpg"
+        filename = f"{photo.file_id}.jpg"
         filepath = PHOTOS_DIR / filename
         await file.download_to_drive(filepath)
         photo_bytes = BytesIO()
@@ -88,13 +92,11 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
         caption_text = update.message.caption or "No caption"
         chat_id = update.effective_chat.id
         
-
         file = await context.bot.get_file(voice.file_id)
         filename = f"voice_{voice.file_id}.ogg"
         filepath = AUDIO_DIR / filename
         await file.download_to_drive(filepath)
         
-
         voice_bytes = BytesIO()
         await file.download_to_memory(voice_bytes)
         voice_bytes.seek(0)
@@ -127,7 +129,6 @@ def start_telegram_bot():
     """Initialize and start the bot"""
     app = ApplicationBuilder().token(TOKEN).build()
     
-
     app.add_handler(CommandHandler("start", hello))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
@@ -138,4 +139,3 @@ def start_telegram_bot():
     print(f"Audio directory: {AUDIO_DIR.absolute()}")
     
     app.run_polling()
-

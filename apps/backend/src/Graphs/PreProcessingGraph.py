@@ -2,38 +2,40 @@ import sys
 from pathlib import Path
 from typing import TypedDict
 from langgraph.graph import START, END, StateGraph
-from pre_processing_agent_state import Lead
 from IPython.display import Image, display
+from src.graphs.PreProcessingAgentState import PreProcessingAgentState
+from src.models.Lead import Lead
+
+
+
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-class PreProcessingAgentState(TypedDict):
-    message : str
-    type: str
-    username: str
-    lead: Lead
 
 pre_processing_graph = StateGraph(PreProcessingAgentState)
 
 def text_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
     """This node is processing the text given from the user to create Output using Multi-Agent system """
     
-
     return state
 
 def photo_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
-    """This node """
-    
+    """Currently not finished """
+    return state
+
 
     return state
 def audio_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
-    """Currently not created """
-
+    """Currently not finished """
     return state
 
-def pre_process_input_cond(state:PreProcessingAgentState)-> PreProcessingAgentState:
+def pre_process_input_cond(state:PreProcessingAgentState, )-> PreProcessingAgentState:
     return state
+
+
+
+
 
 def generate_pre_processing_graph() -> object:
     pre_processing_graph.add_node("text_processing_node",text_processing)
@@ -57,4 +59,4 @@ def generate_pre_processing_graph() -> object:
     from IPython.display import Image, display
     display(Image(pre_processing_graph_app.get_graph().draw_mermaid_png()))
     return pre_processing_graph_app
-generate_pre_processing_graph()
+
