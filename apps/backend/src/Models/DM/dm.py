@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from typing import Optional
-from src.models.Lead import Lead
+from src.models.lead import Lead
 @dataclass
 class DM:
     Lead: Lead

@@ -1,0 +1,12 @@
+"filename", "language", "Python", "comment", "blank", "total"
+"d:\Projects\Agentic-Salesman\apps\backend\src\agents\Prompts\prompt.py", "Python", 12, 36, 7, 55
+"d:\Projects\Agentic-Salesman\apps\backend\src\graphs\MainAgentGraph.py", "Python", 7, 0, 1, 8
+"d:\Projects\Agentic-Salesman\apps\backend\src\graphs\MainAgentState.py", "Python", 0, 0, 1, 1
+"d:\Projects\Agentic-Salesman\apps\backend\src\graphs\PreProcessingAgentState.py", "Python", 3, 0, 0, 3
+"d:\Projects\Agentic-Salesman\apps\backend\src\graphs\PreProcessingGraph.py", "Python", 14, 1, -3, 12
+"d:\Projects\Agentic-Salesman\apps\backend\src\models\Request.py", "Python", 0, 0, 1, 1
+"d:\Projects\Agentic-Salesman\apps\backend\src\services\ProcessMessage.py", "Python", 0, 0, 1, 1
+"d:\Projects\Agentic-Salesman\apps\backend\src\telegram_bot\TelegramBot.py", "Python", 0, 0, -1, -1
+"d:\Projects\Agentic-Salesman\apps\backend\src\tools\WatchTool.py", "Python", 1, 0, 0, 1
+"d:\Projects\Agentic-Salesman\apps\backend\src\tools\__init__.py", "Python", 0, 0, 1, 1
+"Total", "-", 37, 37, 8, 82

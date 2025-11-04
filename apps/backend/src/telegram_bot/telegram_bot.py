@@ -1,14 +1,14 @@
-import os, sys
+import os
 from pathlib import Path
-
 from telegram import Update 
 from dotenv import load_dotenv, find_dotenv
 from typing import Final
 from io import BytesIO
 
-from src.models.Input import InputLevel, Type
-from src.pre_processing.InputProcessing import add_new_data
-
+from src.models.DM.input import InputLevel, Type
+from src.services.wait_and_reply import add_new_data_to_dm
+from src.models.audio_input import AudioInput
+from src.models.image_input import Image
 from telegram.ext import (
     ApplicationBuilder, 
     CommandHandler, 
@@ -33,6 +33,7 @@ input = False
 
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle text messages"""
+    print('clicked')
     user_text = update.message.text
     chat_id = update.effective_chat.id
 
@@ -42,9 +43,10 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user=update.effective_user.username,
         type=Type.TEXT, 
         message=update.message.text,
-        image=None  
+        image=None,
+        audio=None  
     )
-    add_new_data(input_data)
+    add_new_data_to_dm(input_data)
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -56,12 +58,32 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         file = await context.bot.get_file(photo.file_id)
         filename = f"{photo.file_id}.jpg"
         filepath = PHOTOS_DIR / filename
+        print(filepath)
+        print(filename)
         await file.download_to_drive(filepath)
         photo_bytes = BytesIO()
         await file.download_to_memory(photo_bytes)
         photo_bytes.seek(0)  
         
-        messages.append({
+
+        input_data = InputLevel(
+        chat_id=chat_id,
+        user_id=update.effective_user.id,
+        user=update.effective_user.username,
+        type=Type.TEXT, 
+        message=update.message.caption,
+        image=Image(
+            file_path=filepath,
+            file_id=photo.file_id,
+            file_name=f"{photo.file_id}.jpg"
+        ),
+        audio=None
+        )
+       
+        add_new_data_to_dm(input_data)
+        
+
+        """messages.append({
             'type': 'photo',
             'user': update.effective_user.username,
             'user_id': update.effective_user.id,
@@ -70,7 +92,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'file_id': photo.file_id,
             'caption': caption_text,
             'bytes': photo_bytes  
-        })
+        })"""
+        
         
         print(f"Photo received from {update.effective_user.username} (chat_id: {chat_id})")
         print(f"Caption: {caption_text}")
@@ -82,7 +105,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
         
     except Exception as e:
-        print(f"Error handling photo: {e}")
+        print(f"Error handling photo using telegram bot: {e}")
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):

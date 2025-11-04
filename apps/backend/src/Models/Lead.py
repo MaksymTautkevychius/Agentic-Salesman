@@ -1,11 +1,8 @@
-import sys
-from pathlib import Path
-
 from dataclasses import dataclass
 from typing import Optional
-from src.models.ImageInput import Image
-from src.models.AudioInput import Audio
-from src.models.Input import Type
+from src.models.image_input import Image
+from src.models.audio_input import AudioInput
+from src.models.DM.input import Type
 
 @dataclass
 class Lead:
@@ -15,4 +12,4 @@ class Lead:
     type: Type
     message: str
     image: Optional[Image]
-    audio: Optional[Audio]
+    audio: Optional[AudioInput]

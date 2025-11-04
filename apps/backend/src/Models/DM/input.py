@@ -1,9 +1,7 @@
-from dataclasses import dataclass
 from enum import Enum
-
-# Use relative imports since this file is inside src/models/
-from src.models.ImageInput import Image
-from src.models.AudioInput import Audio
+from dataclasses import dataclass
+from src.models.image_input import Image
+from src.models.audio_input import AudioInput
 class Type(Enum):
     TEXT = 1
     IMAGE = 2
@@ -17,4 +15,4 @@ class InputLevel:
     type: Type
     message: str
     image: Image
-    audio: Audio
+    audio: AudioInput

@@ -1,0 +1,9 @@
+"filename", "language", "Python", "comment", "blank", "total"
+"d:\Projects\Agentic-Salesman\apps\backend\src\graphs\pre_processing_agent_state.py", "Python", 2, 0, 0, 2
+"d:\Projects\Agentic-Salesman\apps\backend\src\models\lead.py", "Python", -2, 0, -1, -3
+"d:\Projects\Agentic-Salesman\apps\backend\src\pre_processing\input_processing.py", "Python", 22, -4, 1, 19
+"d:\Projects\Agentic-Salesman\apps\backend\src\services\wait_and_reply.py", "Python", 1, 0, 1, 2
+"d:\Projects\Agentic-Salesman\apps\backend\src\telegram_bot\telegram_bot.py", "Python", -5, 10, 0, 5
+"d:\Projects\Agentic-Salesman\apps\front\UI.py", "Python", 0, 1, 0, 1
+"d:\Projects\Agentic-Salesman\apps\front\__init__.py", "Python", 0, 0, 1, 1
+"Total", "-", 18, 7, 2, 27

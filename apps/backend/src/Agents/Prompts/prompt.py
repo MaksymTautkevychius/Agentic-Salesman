@@ -1,3 +1,5 @@
+from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate,ChatPromptTemplate
+
 Prompt="""
 SYSTEM ROLE
 
@@ -69,7 +71,7 @@ Send the OFFER TEMPLATE using Search Watch again to fetch the image URL
 
 Do not alter the template text, only fill values
 
-Use the deposit % based on Deposit Logic
+Use the deposit percent based on Deposit Logic
 
 Template: “(Use Search Watch Again to get the url of the picture and send it) {URL} Unworn 2025 Full Set (Box & Papers) Price: X AED Payment: Cash, USDT, or Bank Wire Deposit: X% (Non-Refundable) {Check Deposit logic for number} Delivery: From SEARCH WATCH”
 
@@ -271,4 +273,134 @@ If you asked for missing info before and need it again, use a light nudge such a
 Progressive casualness across the conversation is encouraged, while staying professional
 When using tool send WATCH NAME without changes
 Use tool when user says you are wrong
+"""
+
+system_prompt = SystemMessagePromptTemplate.from_template(
+    Prompt
+)
+user_prompt= HumanMessagePromptTemplate.from_template(
+"""
+CONVERSATION CONTEXT
+**User's Last Message:** {{ $('Last_Uttrance').item.json.Last_Uttrance }}
+
+EXTRACTED INFORMATION
+Watch Name/Details: {watch_name}
+Budget Mentioned: {budget}
+Message Type: {message_type}
+Purchase Timing: {purchase_time}
+
+
+RESPONSE REQUIREMENTS
+Respond as Adam using the System Prompt rules
+Follow the flow sequence (0→1→2→3→4) based on current state
+Use the extracted information above to determine next action
+If Watch Name is incomplete or unclear, start at step 0
+If Watch Name is complete, proceed to appropriate flow step
+Match message style to Type (text/image)
+Consider Purchase Timing for deposit logic
+
+CRITICAL REMINDERS
+Ask ONLY ONE question per response
+Keep it short and WhatsApp-casual
+Never mention tools, databases, or being AI
+Use exact template wording on first use
+Paraphrase on repeat questions
+No markdown, no formatting, no emojis
+Don't start with "Got it", "Sure", "Okay", etc.
+
+NEXT ACTION
+Based on the above information, determine:
+1. Which flow step applies?
+2. What information is missing?
+3. What's the single best question or response right now?
+
+
+""",
+input_variables=["watch_name", "budget", "message_type", "purchase_time"]
+)
+main_agent_prompt = ChatPromptTemplate.from_messages([
+    system_prompt,
+    user_prompt
+])
+image_OCR_prompt = """
+Use internet to find the best match.
+
+Analyze the image and identify the brand first. Then, refer to the brand list below to determine which parameters must be included in the output.
+
+Output everything in one message, separating parameters with commas.
+
+Each word must start with a capital letter.
+
+If the image is not a watch, output exactly: Not The Watch
+
+Dial Color Clarification:
+The dial color refers to the color of the watch face — the flat circular surface inside the watch where the hour markers and hands are located.
+It is not the case color or the strap color.
+Be very specific about color naming. Do not output generic colors like “Blue” or “Green.”
+Instead, describe the color precisely, using specific tone names such as “Navy Blue,” “Sky Blue,” “Forest Green,” “Sunburst Silver,” “Champagne Gold,” “Matte Black,” or “Ivory White.”
+If the dial has a gradient, texture, or mixed color (for example “Smoked Blue” or “Silver With Blue Subdials”), describe it fully.
+Do not guess; use visual or reference-matched color descriptions found online for that specific model when possible.
+
+Brand Rules:
+
+AUDEMARS PIGUET
+Models: Code 11.59, Royal Oak, Royal Oak Concept, Royal Oak Mini, Royal Oak Offshore
+Always include: Model Name, Dial Color, Size, Reference Number Prefix
+Often include: Material Details (YG/RG/WG), Special Features (Frosted, Quartz), Movement Type
+
+CARTIER
+Models: Baignoire, Crash, Panthere, Pebble-Shaped, Santos, Tank
+Always include: Model Name, Dial Color/Style, Size, Reference Number (examples: HPI01822, WGSA0107, W3PN0010)
+Often include: Model Variant (Large/Mini/Medium), Material (Full YG), Strap Type (Leather)
+
+F.P. JOURNE
+Models: Astronomic Souveraine, Automatique, Automatique Lune, Automatique Lune Havana, Automatique Reserve, Centigraphe, Chronographe Rattrapante, Chronometre Bleu, Chronometre Furtif, Chronometre Optimum, Chronometre Resonance, Chronometre Souverain, Chronometre Souverain Havana, Divine, Elegante, FFC, Lune, Octa Calendrier, Octa Chronographe, Octa Divine, Octa Lune, Octa Lune Havana, Octa Reserve, Octa Reserve Havana, Octa Reserve De Marche, Quantieme Perpetuel, Repetition Souveraine, Tourbillon Souverain, UTC
+Always include: Model Name, Dial Color, Material, Strap Type, Size
+Often include: Special Editions (Boutique), Material Details (Platinum), Letter Code
+
+OMEGA
+Models: Aqua Terra, Diver, Moonwatch, Speedmaster
+Always include: Model Name, Reference Number
+Rarely include: Dial Color, Size, Special Editions
+
+PATEK PHILIPPE
+Models: Aquanaut, Aquanaut Luce, Calatrava, Complications, Cubitus, Golden Ellipse, Grand Complications, Lady Nautilus, Nautilus, Twenty~4
+Always include: Model Name, Reference Number
+Usually include: Dial Color, Size
+Sometimes include: Special Complications
+
+RICHARD MILLE
+Models: RM 004, RM 005, RM 010, RM 011, RM 012, RM 016, RM 020, RM 022, RM 027, RM 029, RM 030, RM 032, RM 035, RM 037, RM 038, RM 047, RM 050, RM 051, RM 052, RM 053, RM 055, RM 056, RM 057, RM 059, RM 061, RM 062, RM 063, RM 065, RM 067, RM 068, RM 069, RM 07, RM 070, RM 072, RM 17, RM 19, RM 40, RM 43, RM 88, UP-01
+Always include: Reference Number (RM XX), Dial Type
+Usually include: Size (One Value In MM), Material, Strap Type
+Often include: Special Person Or Athlete Name
+
+ROLEX
+Models: 1908, Air King, Cellini, Datejust, Day-Date, Daytona, Deepsea, Explorer, GMT-Master II, Land-Dweller, Milgauss, Oyster Perpetual, Sea-Dweller, Sky-Dweller, Submariner, Yacht-Master, Yacht-Master II
+Nicknames: Panda, Batman, Sprite, Hulk, Bluesy, Root Beer, Bruce Wayne, Zombie, Pepsi, Batgirl, Wimbledon, Kermit, Cookie Monster, Smurf, Bond, Paul Newman, Coke, John Mayer, Explorer
+Always include: Model Name, Dial Color, Size
+Usually include: Reference Number, Bracelet Type (Oyster, Jubilee)
+Often include: Nickname (Panda, Batman), Bezel Type (Fluted)
+
+TUDOR
+Models: Black Bay, Black Bay Chrono
+Always include: Model Name, Dial Color, Size, Reference Number (examples: 79360N-0019, 79360N-0024)
+Sometimes include: Special Edition Names, Material
+
+VACHERON CONSTANTIN
+Models: Historiques, Overseas
+Always include: Model Name, Dial Color, Size, Reference Number, Bezel Type, Category/Style, Material
+Sometimes include: Model Variant Numbers
+
+Output Rules:
+
+Output all details in one line, separated by commas.
+
+Use Title Case (Every Word Capitalized).
+
+Be exact and descriptive with color terminology.
+
+Do not add explanations or commentary.
+
+If not a watch, output exactly: Not The Watch
 """

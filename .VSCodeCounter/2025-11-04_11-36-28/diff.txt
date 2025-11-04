@@ -1,0 +1,81 @@
+Date : 2025-11-04 11:36:28
+Directory : d:\Projects\Agentic-Salesman\apps\backend
+Total : 40 files,  114 codes, 12 comments, -3 blanks, all 123 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         40 |        114 |         12 |         -3 |        123 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                               | files      | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                                  |         40 |        114 |         12 |         -3 |        123 |
+| ..                                                                                 |          2 |          0 |         -1 |         -1 |         -2 |
+| ..\front                                                                           |          2 |          0 |         -1 |         -1 |         -2 |
+| src                                                                                |         36 |        114 |         13 |          0 |        127 |
+| src\agents                                                                         |          3 |         82 |          0 |          0 |         82 |
+| src\agents (Files)                                                                 |          2 |          0 |          0 |          0 |          0 |
+| src\agents\Prompts                                                                 |          1 |         82 |          0 |          0 |         82 |
+| src\db                                                                             |          2 |          0 |          0 |          0 |          0 |
+| src\graphs                                                                         |          8 |         12 |          2 |         -3 |         11 |
+| src\models                                                                         |         12 |          0 |         -1 |         -1 |         -2 |
+| src\models (Files)                                                                 |         10 |        -28 |         -1 |         -3 |        -32 |
+| src\models\DM                                                                      |          2 |         28 |          0 |          2 |         30 |
+| src\pre_processing                                                                 |          2 |          0 |          0 |          0 |          0 |
+| src\services                                                                       |          3 |          7 |         12 |         -2 |         17 |
+| src\telegram_bot                                                                   |          2 |         13 |          0 |          4 |         17 |
+| src\tests                                                                          |          2 |          0 |          0 |          2 |          2 |
+| src\tools                                                                          |          2 |          0 |          0 |          0 |          0 |
+| tests                                                                              |          2 |          0 |          0 |         -2 |         -2 |
++------------------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                           | language | code       | comment    | blank      | total      |
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| d:\Projects\Agentic-Salesman\apps\backend\src\agents\MainAgent.py                  | Python   |        -16 |          0 |        -10 |        -26 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\agents\Prompts\prompt.py             | Python   |         82 |          0 |          0 |         82 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\agents\main_agent.py                 | Python   |         16 |          0 |         10 |         26 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\db\DatabaseOperations.py             | Python   |        -61 |         -2 |        -12 |        -75 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\db\database_operations.py            | Python   |         61 |          2 |         12 |         75 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\MainAgentGraph.py             | Python   |         -7 |          0 |         -1 |         -8 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\MainAgentState.py             | Python   |          0 |          0 |         -1 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\PreProcessingAgentState.py    | Python   |        -10 |          0 |          0 |        -10 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\PreProcessingGraph.py         | Python   |        -55 |         -4 |        -16 |        -75 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\main_agent_graph.py           | Python   |          7 |          0 |          1 |          8 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\main_agent_state.py           | Python   |          0 |          0 |          1 |          1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\pre_processing_agent_state.py | Python   |         11 |          0 |          0 |         11 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\graphs\pre_processing_graph.py       | Python   |         66 |          6 |         13 |         85 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\AudioInput.py                 | Python   |         -6 |          0 |         -2 |         -8 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\DM.py                         | Python   |        -11 |          0 |         -1 |        -12 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\DM\dm.py                      | Python   |         11 |          0 |          1 |         12 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\DM\input.py                   | Python   |         17 |          0 |          1 |         18 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\ImageInput.py                 | Python   |         -6 |          0 |         -1 |         -7 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\Input.py                      | Python   |        -17 |         -1 |         -2 |        -20 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\Lead.py                       | Python   |        -16 |          0 |         -2 |        -18 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\Request.py                    | Python   |          0 |          0 |         -1 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\audio_input.py                | Python   |          6 |          0 |          2 |          8 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\image_input.py                | Python   |          6 |          0 |          1 |          7 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\lead.py                       | Python   |         16 |          0 |          2 |         18 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\models\request.py                    | Python   |          0 |          0 |          1 |          1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\pre_processing\InputProcessing.py    | Python   |        -71 |         -5 |        -19 |        -95 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\pre_processing\input_processing.py   | Python   |         71 |          5 |         19 |         95 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\services\ProcessMessage.py           | Python   |          0 |          0 |         -1 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\services\WaitAndReply.py             | Python   |         -8 |          0 |         -5 |        -13 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\services\wait_and_reply.py           | Python   |         15 |         12 |          4 |         31 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\telegram_bot\TelegramBot.py          | Python   |       -111 |         -4 |        -27 |       -142 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\telegram_bot\telegram_bot.py         | Python   |        124 |          4 |         31 |        159 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\tests\__init__.py                    | Python   |          0 |          0 |          1 |          1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\tests\agents_testing.py              | Python   |          0 |          0 |          1 |          1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\tools\WatchTool.py                   | Python   |         -1 |          0 |          0 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\backend\src\tools\watch_tool.py                  | Python   |          1 |          0 |          0 |          1 |
+| d:\Projects\Agentic-Salesman\apps\backend\tests\__init__.py                        | Python   |          0 |          0 |         -1 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\backend\tests\agents_testing.py                  | Python   |          0 |          0 |         -1 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\front\UI.py                                      | Python   |          0 |         -1 |          0 |         -1 |
+| d:\Projects\Agentic-Salesman\apps\front\__init__.py                                | Python   |          0 |          0 |         -1 |         -1 |
+| Total                                                                              |          |        114 |         12 |         -3 |        123 |
++------------------------------------------------------------------------------------+----------+------------+------------+------------+------------+
