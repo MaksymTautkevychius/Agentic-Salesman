@@ -1,7 +1,6 @@
 import sys
 from pathlib import Path
 
-
 backend_path = Path(__file__).parent.parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
@@ -13,17 +12,23 @@ from src.models.DM.input import InputLevel, Type
 DM_Level: dict[str, DM] = {}
 
 
-def add_input_to_dm(input: InputLevel) -> None:
+
+
+def add_input_to_dm(input: InputLevel) -> Type:
+    print(input.type)
     dm_exists(input.chat_id)
     if input.type == Type.TEXT:
         add_dm_text(input)
+        return Type.TEXT
     elif input.type == Type.IMAGE:
         add_dm_image(input)
+        return Type.IMAGE
     elif input.type == Type.AUDIO:
-        return
+        return Type.AUDIO
 
 
 def add_dm_text(input: InputLevel) -> None:
+
     dm = DM_Level.get(input.chat_id)
     if dm.dm1 == '' or dm.dm1 == None:
         dm.dm1 = input.message
@@ -47,7 +52,7 @@ def add_dm_text(input: InputLevel) -> None:
         image=None,
         audio=None
     )
-    print(f"{message} is added")
+    print(f"{dm.Lead.message} is added")
 
 def add_dm_image(input: InputLevel) -> None:
     dm = DM_Level.get(input.chat_id)
@@ -133,4 +138,3 @@ def dm_exists(chat_id: str) -> None:
             dm4='',
             dm5=''
         )
-

@@ -12,7 +12,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 pre_processing_graph = StateGraph(PreProcessingAgentState)
-
+pre_processing_graph_compiled = None
 def text_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
     """Text is already put in the needed state, this function created in case for needed changes in prompt"""
     return state
@@ -44,7 +44,8 @@ def pre_process_input_cond(state:PreProcessingAgentState, )-> PreProcessingAgent
     return state
 
 
-def generate_pre_processing_graph() -> object:
+def generate_pre_processing_graph() -> None:
+    print("generate_pre_processing_graph")
     pre_processing_graph.add_node("text_processing_node",text_processing)
     pre_processing_graph.add_node("photo_processing_node",photo_processing)
     pre_processing_graph.add_node("audio_processing_node",audio_processing)
@@ -63,7 +64,7 @@ def generate_pre_processing_graph() -> object:
     pre_processing_graph.add_edge("photo_processing_node",END)
     pre_processing_graph.add_edge("audio_processing_node",END)
     pre_processing_graph_app = pre_processing_graph.compile()
-    return pre_processing_graph_app
+    pre_processing_graph_compiled = pre_processing_graph_app
 
 def fill_pre_processing_with_data(Lead: Lead):
     state:PreProcessingAgentState = PreProcessingAgentState(

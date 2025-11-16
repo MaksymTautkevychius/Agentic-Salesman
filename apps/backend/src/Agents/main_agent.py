@@ -1,5 +1,6 @@
 from dotenv import load_dotenv 
 import os
+from Prompts.prompt import main_agent_prompt
 
 OpenAPI = os.getenv('OpenAPI')
 os.environ["OPEN_API_KEY"]= OpenAPI
@@ -10,16 +11,4 @@ alibaba_qwen_3max='qwen3-max'
 
 
 
-
-def personalInfoAgent():
-    return
-
-def mainAgent():
-    return
-
-def helperAgent():
-    return
-
-def summaryAgent():
-    return
 
