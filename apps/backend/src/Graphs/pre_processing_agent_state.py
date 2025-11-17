@@ -5,7 +5,6 @@ from src.models.image_input import Image
 
 
 class PreProcessingAgentState(TypedDict):
-    OCR_message: str
     message : str
     type: str
     username: str

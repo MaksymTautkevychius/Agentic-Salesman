@@ -2,17 +2,17 @@ from src.models.lead import Lead
 from src.models.lead import Type
 from src.models.DM.input import InputLevel
 from src.pre_processing.input_processing import add_input_to_dm, check_message_state_text
-from src.graphs.pre_processing_graph import fill_pre_processing_with_data,invoke_pre_processing
-from src.graphs.pre_processing_graph import pre_processing_graph_compiled
+from apps.backend.src.graphs.pre_processing_graph import fill_pre_processing_with_data,invoke_pre_processing
+from apps.backend.src.graphs.pre_processing_agent_state import pr
 
 
-def process_message_and_generate_reply(lead: Lead, graph: object)-> object:
+def process_message_and_generate_reply(lead: Lead)-> None:
     """
-    Sends bunch of messages to the pre_processing and main graphs
+    Sends message or  bunch of messages to the pre_processing and main graphs
     
     """
-    invoke_pre_processing(graph,fill_pre_processing_with_data(lead))
-    pass
+    invoke_pre_processing(lead)
+    
 
 def send_summarization_to_user(chatd_id: str, message: str)->None:
     """
@@ -33,17 +33,10 @@ def add_new_data_to_dm(input: InputLevel) -> None:
     Adds the data from telegram bot to dm messages in a processed state
     
     """
-    message_type=add_input_to_dm(input)
-    print(message_type)
-    types = (Type)
-    match message_type:
-        case types.IMAGE:
-            pass
-        case types.TEXT:
-            pre_processing_graph_compiled.invoke()
-            print(f"compiled graph value added {message_type.value}")
-        case types.AUDIO:
-            pass
+    new_messages = add_input_to_dm(input)
+    process_message_and_generate_reply(new_messages)
+    
+    
         
    #if value!=None:
    #    process_message_and_generate_reply(value)
