@@ -8,7 +8,7 @@ from io import BytesIO
 from src.models.DM.input import InputLevel, Type
 from src.services.wait_and_reply import add_new_data_to_dm
 from src.models.audio_input import AudioInput
-from src.models.image_input import Image
+from src.models.image_input import ImageInput
 from telegram.ext import (
     ApplicationBuilder, 
     CommandHandler, 
@@ -72,7 +72,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         user=update.effective_user.username,
         type=Type.TEXT, 
         message=update.message.caption,
-        image=Image(
+        image=ImageInput(
             file_path=filepath,
             file_id=photo.file_id,
             file_name=f"{photo.file_id}.jpg"

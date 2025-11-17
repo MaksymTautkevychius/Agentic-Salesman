@@ -1,7 +1,7 @@
 from typing import TypedDict
-from src.models.lead import Lead
+from src.models.Lead import Lead
 from src.models.audio_input import AudioInput
-from src.models.image_input import Image
+from src.models.image_input import ImageInput
 
 
 class PreProcessingAgentState(TypedDict):
@@ -9,5 +9,5 @@ class PreProcessingAgentState(TypedDict):
     type: str
     username: str
     lead: Lead
-    image: Image
+    image: ImageInput
     audio: AudioInput

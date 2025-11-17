@@ -1,6 +1,6 @@
 from enum import Enum
 from dataclasses import dataclass
-from src.models.image_input import Image
+from src.models.image_input import ImageInput
 from src.models.audio_input import AudioInput
 class Type(Enum):
     TEXT = 1
@@ -14,5 +14,5 @@ class InputLevel:
     user: str
     type: Type
     message: str
-    image: Image
+    image: ImageInput
     audio: AudioInput

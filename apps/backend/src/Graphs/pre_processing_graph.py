@@ -5,7 +5,7 @@ from langchain_community.document_loaders import UnstructuredExcelLoader
 from langchain_community.chat_models.openai import ChatOpenAI
 from langchain_classic.schema import HumanMessage
 from src.graphs.pre_processing_agent_state import PreProcessingAgentState
-from src.models.lead import Lead
+from src.models.Lead import Lead
 from src.agents.Prompts.prompt import image_OCR_prompt
 
 project_root = Path(__file__).parent.parent.parent

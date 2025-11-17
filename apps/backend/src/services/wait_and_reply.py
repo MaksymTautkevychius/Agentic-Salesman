@@ -1,9 +1,9 @@
-from src.models.lead import Lead
-from src.models.lead import Type
+from src.models.Lead import Lead
+from src.models.Lead import Type
 from src.models.DM.input import InputLevel
 from src.pre_processing.input_processing import add_input_to_dm, check_message_state_text
-from apps.backend.src.graphs.pre_processing_graph import fill_pre_processing_with_data,invoke_pre_processing
-from apps.backend.src.graphs.pre_processing_agent_state import pr
+from src.graphs.pre_processing_graph import fill_pre_processing_with_data,invoke_pre_processing
+#from apps.backend.src.graphs.pre_processing_agent_state import pr
 
 
 def process_message_and_generate_reply(lead: Lead)-> None:
