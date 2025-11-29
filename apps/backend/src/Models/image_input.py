@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 @dataclass
-class Image:
+class ImageInput:
     file_path: str
     file_id: str
     file_name: str
