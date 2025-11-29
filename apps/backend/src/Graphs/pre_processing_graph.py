@@ -11,8 +11,53 @@ from src.agents.Prompts.prompt import image_OCR_prompt
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
+class PreProcessingPipeline:
+    def __init__(self):
+        self._pre_processing_graph = StateGraph(PreProcessingAgentState)
+        self._pre_processing_graph_compiled = None
+
+    @property
+    def pre_processing_graph_compiled(self):
+        return self._pre_processing_graph_compiled
+
+    @pre_processing_graph_compiled.setter
+    def pre_processing_graph_compiled(self, value):
+        self._pre_processing_graph_compiled = value
+
+    def generate_pre_processing_graph(self):
+
+        
+        self._pre_processing_graph.add_node("text_processing_node", text_processing)
+        self._pre_processing_graph.add_node("photo_processing_node", photo_processing)
+        self._pre_processing_graph.add_node("audio_processing_node", audio_processing)
+        self._pre_processing_graph.add_node("router", lambda state: state)
+
+        
+        self._pre_processing_graph.add_edge(START, "router")
+
+        self._pre_processing_graph.add_conditional_edges(
+            "router",
+            pre_process_input_cond,
+            {
+                "text_processing_operation": "text_processing_node",
+                "photo_processing_operation": "photo_processing_node",
+                "audio_processing_operation": "audio_processing_node"
+            }
+        )
+
+        self._pre_processing_graph.add_edge("text_processing_node", END)
+        self._pre_processing_graph.add_edge("photo_processing_node", END)
+        self._pre_processing_graph.add_edge("audio_processing_node", END)
+
+        self.pre_processing_graph_compiled = self._pre_processing_graph.compile()
+
+
+
+
+
 pre_processing_graph = StateGraph(PreProcessingAgentState)
-pre_processing_graph_compiled = None
+processor = PreProcessingPipeline()
+processor.generate_pre_processing_graph()
 def text_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
     """Text is already put in the needed state, this function created in case for needed changes in prompt"""
     return state
@@ -34,8 +79,6 @@ def photo_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
     state["OCR_message"] = llm.invoke([message]).content
     return state
 
-
-    return state
 def audio_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
     """Currently not finished """
     return state
@@ -43,28 +86,6 @@ def audio_processing(state:PreProcessingAgentState) -> PreProcessingAgentState:
 def pre_process_input_cond(state:PreProcessingAgentState, )-> PreProcessingAgentState:
     return state
 
-
-def generate_pre_processing_graph() -> None:
-    print("generate_pre_processing_graph")
-    pre_processing_graph.add_node("text_processing_node",text_processing)
-    pre_processing_graph.add_node("photo_processing_node",photo_processing)
-    pre_processing_graph.add_node("audio_processing_node",audio_processing)
-    pre_processing_graph.add_node("router",lambda state: state)
-    pre_processing_graph.add_edge(START,"router")
-    pre_processing_graph.add_conditional_edges(
-        "router",
-        pre_process_input_cond,
-        {
-         "text_processing_operation":"text_processing_node",
-         "photo_processing_operation":"photo_processing_node",
-         "audio_processing_operation":"audio_processing_node"
-        }
-    )
-    pre_processing_graph.add_edge("text_processing_node",END)
-    pre_processing_graph.add_edge("photo_processing_node",END)
-    pre_processing_graph.add_edge("audio_processing_node",END)
-    pre_processing_graph_app = pre_processing_graph.compile()
-    pre_processing_graph_compiled = pre_processing_graph_app
 
 def fill_pre_processing_with_data(Lead: Lead):
     state:PreProcessingAgentState = PreProcessingAgentState(
@@ -76,10 +97,18 @@ def fill_pre_processing_with_data(Lead: Lead):
     )
     return state
 
-def invoke_pre_processing(
-    graph: object, 
-    state: PreProcessingAgentState
-) -> PreProcessingAgentState:
+def invoke_pre_processing(lead: Lead) -> PreProcessingAgentState:
     """Invoke the pre-processing graph and return the final state"""
 
-    return graph.invoke(state)
+    state = PreProcessingAgentState(
+        message=lead.message,
+        type=lead.type,
+        username=lead.user,
+        lead=lead,
+        image = lead.image,
+        audio=lead.audio
+    )
+    if processor.pre_processing_graph_compiled is None:
+        raise ValueError("Graph is not compiled. Pass a compiled graph instance")
+
+    return processor.pre_processing_graph_compiled.invoke(state)

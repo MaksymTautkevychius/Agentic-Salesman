@@ -1,33 +1,39 @@
 import sys
+from src.models.lead import Lead
+from src.models.DM.dm import DM
+from src.models.DM.input import InputLevel, Type
 from pathlib import Path
 
 backend_path = Path(__file__).parent.parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
 
-from src.models.lead import Lead
-from src.models.DM.dm import DM
-from src.models.DM.input import InputLevel, Type
 
+"""DMs buffer Of all users writing now"""
 DM_Level: dict[str, DM] = {}
 
 
 
 
-def add_input_to_dm(input: InputLevel) -> Type:
+def add_input_to_dm(input: InputLevel)->Lead:
     print(input.type)
     dm_exists(input.chat_id)
     if input.type == Type.TEXT:
-        add_dm_text(input)
-        return Type.TEXT
+        lead = add_dm_text(input)
+        dms = check_message_state_text(lead.chat_id)
+        if dms!=None:
+            return dms
     elif input.type == Type.IMAGE:
-        add_dm_image(input)
-        return Type.IMAGE
-    elif input.type == Type.AUDIO:
-        return Type.AUDIO
+        lead = add_dm_image(input)
+        dms = check_message_state_image(lead.chat_id)
+        if dms!=None:
+            return dms
+
+   ##elif input.type == Type.AUDIO:
+   ##    return None
 
 
-def add_dm_text(input: InputLevel) -> None:
+def add_dm_text(input: InputLevel) -> Lead:
 
     dm = DM_Level.get(input.chat_id)
     if dm.dm1 == '' or dm.dm1 == None:
@@ -52,9 +58,9 @@ def add_dm_text(input: InputLevel) -> None:
         image=None,
         audio=None
     )
-    print(f"{dm.Lead.message} is added")
+    return dm.Lead
 
-def add_dm_image(input: InputLevel) -> None:
+def add_dm_image(input: InputLevel) -> Lead:
     dm = DM_Level.get(input.chat_id)
     if dm.dm1 == '' or dm.dm1 == None:
         dm.dm1 = input.message
@@ -77,8 +83,9 @@ def add_dm_image(input: InputLevel) -> None:
         message=message,
         image=input.image,
         audio=None
-    )
-    print(f"{message} is added")
+    ) 
+    
+    return dm.Lead
 
 
 def check_message_state_text(chat_id: str) -> Lead:
