@@ -1,19 +1,13 @@
 import sys
-from src.models.lead import Lead
 from src.models.DM.dm import DM
 from src.models.DM.input import InputLevel, Type
 from pathlib import Path
+from src.models.Lead import Lead
 
 backend_path = Path(__file__).parent.parent.parent
 if str(backend_path) not in sys.path:
     sys.path.insert(0, str(backend_path))
 
-<<<<<<< HEAD
-=======
-from src.models.Lead import Lead
-from src.models.DM.dm import DM
-from src.models.DM.input import InputLevel, Type
->>>>>>> 84613ce67057d4b4cd51473efa9336c3f7c82c5e
 
 """DMs buffer Of all users writing now"""
 DM_Level: dict[str, DM] = {}

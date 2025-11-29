@@ -1,5 +1,5 @@
 from src.telegram_bot.telegram_bot import start_telegram_bot
-from apps.backend.src.graphs.pre_processing_graph import generate_pre_processing_graph
+from src.graphs.pre_processing_graph import generate_pre_processing_graph
 
 
 
