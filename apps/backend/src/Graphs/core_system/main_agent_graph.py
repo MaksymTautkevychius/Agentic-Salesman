@@ -1,7 +1,7 @@
 from langgraph.graph import START, END, StateGraph
 from IPython.display import Image, display
-from apps.backend.src.graphs.pre_processing_agent_state import PreProcessingAgentState
-from src.graphs.main_agent_state import AgentState
+from src.graphs.pre_processing_agent_state import PreProcessingAgentState
+from src.graphs.core_system.main_agent_state import AgentState
 
 def extractor(state: AgentState):
     state["message"] = "Extracted user info: name, WatchName, Budget..."
