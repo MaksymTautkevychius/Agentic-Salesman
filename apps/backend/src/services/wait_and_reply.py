@@ -2,42 +2,45 @@ from src.models.Lead import Lead
 from src.models.Lead import Type
 from src.models.DM.input import InputLevel
 from src.pre_processing.input_processing import add_input_to_dm, check_message_state_text
-from src.graphs.pre_processing_graph import fill_pre_processing_with_data,invoke_pre_processing
-#from apps.backend.src.graphs.pre_processing_agent_state import pr
+from src.graphs.pre_processing_graph import fill_pre_processing_with_data, invoke_pre_processing
 
 
-def process_message_and_generate_reply(lead: Lead)-> None:
+def process_message_and_generate_reply(lead: Lead) -> None:
     """
-    Sends message or  bunch of messages to the pre_processing and main graphs
-    
+    Sends message or bunch of messages to the pre_processing and main graphs
     """
-    invoke_pre_processing(lead)
+    if lead is None:
+        print("Warning: Lead is None, skipping processing")
+        return
+    
+    value = invoke_pre_processing(lead)
+    print('finished invoke')
+    print(f"Result: {value}")
     
 
-def send_summarization_to_user(chatd_id: str, message: str)->None:
+def send_summarization_to_user(chatd_id: str, message: str) -> None:
     """
     After user reaching the desired point, all of the users data sends to the required user
-    
     """
     pass
 
-async def send_message_to_user(lead: Lead)->None:
+
+async def send_message_to_user(lead: Lead) -> None:
     """
-    Sends message tob the user via telegram bot
-    
+    Sends message to the user via telegram bot
     """
     pass
+
 
 def add_new_data_to_dm(input: InputLevel) -> None:
     """
     Adds the data from telegram bot to dm messages in a processed state
-    
     """
     new_messages = add_input_to_dm(input)
+    
+    # Check if new_messages is None before processing
+    if new_messages is None:
+        print("No new messages to process (message skipped or already processed)")
+        return
+    
     process_message_and_generate_reply(new_messages)
-    
-    
-        
-   #if value!=None:
-   #    process_message_and_generate_reply(value)
-    

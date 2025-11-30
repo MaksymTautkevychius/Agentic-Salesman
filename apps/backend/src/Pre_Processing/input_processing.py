@@ -13,28 +13,26 @@ if str(backend_path) not in sys.path:
 DM_Level: dict[str, DM] = {}
 
 
-
-
-def add_input_to_dm(input: InputLevel)->Lead:
+def add_input_to_dm(input: InputLevel) -> Lead:
     print(input.type)
     dm_exists(input.chat_id)
     if input.type == Type.TEXT:
         lead = add_dm_text(input)
         dms = check_message_state_text(lead.chat_id)
-        if dms!=None:
+        if dms != None:
             return dms
+        return None  # ← Add this
     elif input.type == Type.IMAGE:
         lead = add_dm_image(input)
         dms = check_message_state_image(lead.chat_id)
-        if dms!=None:
+        if dms != None:
             return dms
-
-   ##elif input.type == Type.AUDIO:
-   ##    return None
+        return None  # ← Add this
+    
+    return None  # ← Add this as fallback
 
 
 def add_dm_text(input: InputLevel) -> Lead:
-
     dm = DM_Level.get(input.chat_id)
     if dm.dm1 == '' or dm.dm1 == None:
         dm.dm1 = input.message
@@ -59,6 +57,7 @@ def add_dm_text(input: InputLevel) -> Lead:
         audio=None
     )
     return dm.Lead
+
 
 def add_dm_image(input: InputLevel) -> Lead:
     dm = DM_Level.get(input.chat_id)
@@ -93,7 +92,7 @@ def check_message_state_text(chat_id: str) -> Lead:
     dm = DM_Level.get(chat_id)
     if not dm:
         print(f"No DM found for chat_id: {chat_id}")
-        return
+        return None  # ← Add explicit return
     print(chat_id)
     print(dm)
     DM1 = dm.dm1
@@ -110,13 +109,15 @@ def check_message_state_text(chat_id: str) -> Lead:
         return dm.Lead
     else:
         print("Message skipped")
+        return None  # ← Add explicit return
+
 
 def check_message_state_image(chat_id: str) -> Lead:
     """Check message state and prepare data for bot trigger."""
     dm = DM_Level.get(chat_id)
     if not dm:
         print(f"No DM found for chat_id: {chat_id}")
-        return
+        return None  # ← Add explicit return
     print(chat_id) 
     print(dm)
     DM1 = dm.dm1
@@ -134,6 +135,8 @@ def check_message_state_image(chat_id: str) -> Lead:
         return dm.Lead
     else:
         print("Message skipped")
+        return None  # ← Add explicit return
+
 
 def dm_exists(chat_id: str) -> None:
     if chat_id not in DM_Level:

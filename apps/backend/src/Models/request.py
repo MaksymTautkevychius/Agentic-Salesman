@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from src.models.lead import Type
+from src.models.Lead import Type
 @dataclass
 class PromptData():
     message : str

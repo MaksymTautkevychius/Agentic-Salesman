@@ -11,3 +11,4 @@ class PreProcessingAgentState(TypedDict):
     lead: Lead
     image: ImageInput
     audio: AudioInput
+    OCR_message: str

@@ -13,6 +13,6 @@ class InputLevel:
     user_id: str
     user: str
     type: Type
-    message: str
+    message: str 
     image: ImageInput
     audio: AudioInput

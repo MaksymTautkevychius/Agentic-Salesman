@@ -65,35 +65,21 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await file.download_to_memory(photo_bytes)
         photo_bytes.seek(0)  
         
-
         input_data = InputLevel(
-        chat_id=chat_id,
-        user_id=update.effective_user.id,
-        user=update.effective_user.username,
-        type=Type.TEXT, 
-        message=update.message.caption,
-        image=ImageInput(
-            file_path=filepath,
-            file_id=photo.file_id,
-            file_name=f"{photo.file_id}.jpg"
-        ),
-        audio=None
+            chat_id=chat_id,
+            user_id=update.effective_user.id,
+            user=update.effective_user.username,
+            type=Type.IMAGE,  # ← CHANGED FROM Type.TEXT
+            message=update.message.caption or " ",  
+            image=ImageInput(
+                file_path=str(filepath),  # ← Convert Path to string
+                file_id=photo.file_id,
+                file_name=filename  # ← Use the filename variable
+            ),
+            audio=None
         )
        
         add_new_data_to_dm(input_data)
-        
-
-        """messages.append({
-            'type': 'photo',
-            'user': update.effective_user.username,
-            'user_id': update.effective_user.id,
-            'chat_id': chat_id,
-            'file_path': str(filepath),
-            'file_id': photo.file_id,
-            'caption': caption_text,
-            'bytes': photo_bytes  
-        })"""
-        
         
         print(f"Photo received from {update.effective_user.username} (chat_id: {chat_id})")
         print(f"Caption: {caption_text}")
@@ -106,6 +92,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     except Exception as e:
         print(f"Error handling photo using telegram bot: {e}")
+        import traceback
+        traceback.print_exc()  # This will show the full error trace
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):

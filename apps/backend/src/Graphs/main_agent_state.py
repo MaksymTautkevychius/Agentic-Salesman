@@ -1,5 +1,5 @@
 from typing import TypedDict
-from src.models.lead import Lead
+from  src.models.Lead import Lead
 class AgentState(TypedDict, total=False):
     lead: Lead
     name: str
