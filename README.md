@@ -1,1 +1,1 @@
-# Automated AI Agent for WhatsApp conversations
+# Automated AI Agent for Telegram conversations
