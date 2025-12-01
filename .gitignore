@@ -211,8 +211,8 @@ rec.in
 
 
 # Folders for saving images and audio data
-./received_photos/
-./received_audio/
+apps/received_photos/
+apps/received_audio/
 
 #prompts
 extractor_prompt.txt

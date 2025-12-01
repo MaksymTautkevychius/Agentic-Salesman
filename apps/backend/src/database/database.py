@@ -1,4 +1,5 @@
 import psycopg2
+from psycopg2.extras import Json
 from dotenv import load_dotenv
 import os,json
 
@@ -43,7 +44,7 @@ def remove_user():
 def modify_user_data(parameters: object):
     return
 
-def add_message(session_id: str, message:json) -> int:
+def add_message(session_id: str, message: dict) -> int:
     """
     Insert an AI message into public.n8n_chat_histories.
 
@@ -68,14 +69,52 @@ def add_message(session_id: str, message:json) -> int:
                     VALUES (%s, %s)
                     RETURNING id;
                     """,
-                    (session_id, message),
+                    (session_id, Json(message)),
                 )
                 new_id = cur.fetchone()[0]
                 return new_id
     except Exception as e:
         print(f"Failed to insert new message: {e}")
         raise
+import psycopg2
+
 def get_messages_by_session_id(session_id: str):
+    """
+    Retrieve up to 40 chat messages for a given session from the database.
+
+    This function establishes a new connection to the PostgreSQL database using
+    the globally configured connection parameters (USER, PASSWORD, HOST, PORT,
+    DBNAME, sslmode="require"), queries the `public.chat_history` table for
+    rows matching the provided `session_id`, and returns the `message` column
+    values.
+
+    Parameters
+    ----------
+    session_id : str
+        The unique identifier of the chat session whose messages should be
+        retrieved.
+
+    Returns
+    -------
+    list[tuple]
+        A list of tuples as returned by `cursor.fetchall()`. Each tuple
+        contains a single element: the `message` value for a row in
+        `public.chat_history`. At most 40 rows are returned.
+
+    Raises
+    ------
+    Exception
+        Propagates any exception that occurs while connecting to the database
+        or executing the query. The exception is logged via `print` before
+        being re-raised.
+
+    Notes
+    -----
+    - The results are not ordered explicitly. If ordering is important
+      (e.g., by timestamp), the SQL query should include an ORDER BY clause.
+    - The function uses a context manager to ensure the database connection
+      and cursor are closed automatically.
+    """
     try:
         with psycopg2.connect(
             user=USER,
@@ -83,34 +122,24 @@ def get_messages_by_session_id(session_id: str):
             host=HOST,
             port=PORT,
             dbname=DBNAME,
-            sslmode="require",  
+            sslmode="require",
         ) as conn:
             with conn.cursor() as cur:
                 cur.execute(
-                """
-                SELECT message 
-                FROM public.chat_history
-                WHERE session_id={session_id}
-                LIMIT 40;
-                """,
-                (session_id)
+                    """
+                    SELECT message
+                    FROM public.chat_history
+                    WHERE session_id = %s
+                    LIMIT 40;
+                    """,
+                    (session_id,),  # 1-element tuple
                 )
-            output = cur.fetchall()
-            output = [row["message"] for row in rows]  # list of JSON/dict messages
+                output = cur.fetchall()
         return output
     except Exception as e:
-        print(f"Failed to retreive messages: {e}")
+        print(f"Failed to retrieve messages: {e}")
         raise
 
 Cursor = connect_to_db()
-ai_msg = '''
-{
-    "role": "assistant",
-    "content": "Hello, how can I help you?"
-}
-'''
 
-# convert to dict first
-ai_msg_obj = json.loads(ai_msg)
-add_message("13141",ai_msg_obj)
-get_messages_by_session_id('13141')
+
