@@ -2,7 +2,7 @@ from dotenv import load_dotenv
 import os
 from Prompts.prompt import main_agent_prompt
 
-OpenAPI = os.getenv('OpenAPI')
+OpenAPI = os.getenv('OPEN_API_KEY')
 os.environ["OPEN_API_KEY"]= OpenAPI
 openai_gpt5 = 'gpt-5'
 openai_gpt4_1='gpt-4.1'

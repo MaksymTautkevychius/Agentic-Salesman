@@ -1,4 +1,4 @@
-from src.telegram_bot.telegram_bot import start_telegram_bot
+from src.telegram_handler.telegram_input_handler import start_telegram_bot
 from src.graphs.pre_processing_graph import generate_pre_processing_graph
 
 
