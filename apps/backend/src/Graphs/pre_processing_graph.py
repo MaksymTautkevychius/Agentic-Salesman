@@ -1,4 +1,4 @@
-import sys
+import sys,os
 import base64
 from pathlib import Path
 from langgraph.graph import START, END, StateGraph
@@ -8,7 +8,6 @@ from langchain_classic.schema import HumanMessage
 from src.graphs.pre_processing_agent_state import PreProcessingAgentState
 from src.models.Lead import Lead
 from src.models.DM.input import Type
-from src.agents.Prompts.prompt import image_OCR_prompt
 
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
@@ -44,7 +43,7 @@ def photo_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
         
         message = HumanMessage(
             content=[
-                {"type": "text", "text": f"{image_OCR_prompt}"},
+                {"type": "text", "text": f"{os.getenv('image_handler_prompt')}"},
                 {
                     "type": "image_url", 
                     "image_url": {

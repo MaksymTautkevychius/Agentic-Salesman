@@ -12,12 +12,6 @@ DBNAME = os.getenv("dbname")
 
 def connect_to_db() -> object:
     try:
-        load_dotenv()
-        USER = os.getenv("user")
-        PASSWORD = os.getenv("password")
-        HOST = os.getenv("host")
-        PORT = os.getenv("port")
-        DBNAME = os.getenv("dbname")
         connection = psycopg2.connect(
             user=USER,
             password=PASSWORD,
@@ -69,14 +63,14 @@ def add_message(session_id: str, message: dict) -> int:
                     VALUES (%s, %s)
                     RETURNING id;
                     """,
-                    (session_id, Json(message)),
+                    (str(session_id), Json(message)),
                 )
                 new_id = cur.fetchone()[0]
                 return new_id
     except Exception as e:
         print(f"Failed to insert new message: {e}")
         raise
-import psycopg2
+
 
 def get_messages_by_session_id(session_id: str):
     """
@@ -132,7 +126,7 @@ def get_messages_by_session_id(session_id: str):
                     WHERE session_id = %s
                     LIMIT 40;
                     """,
-                    (session_id,),  # 1-element tuple
+                    (str(session_id),),  # 1-element tuple
                 )
                 output = cur.fetchall()
         return output
@@ -140,6 +134,27 @@ def get_messages_by_session_id(session_id: str):
         print(f"Failed to retrieve messages: {e}")
         raise
 
-Cursor = connect_to_db()
+
+test_session_id = "session_12345"
+test_message = {
+    "role": "assistant",
+    "content": "Hello! This is a test message3"
+}
+
+try:
+    new_id = add_message(test_session_id, test_message)
+    print(f"Inserted new message with ID: {new_id}")
+except Exception as e:
+    print(f"Error testing add_message: {e}")
 
 
+
+
+test_session_id = "session_12345"  # Use an existing session_id in DB
+try:
+    messages = get_messages_by_session_id(test_session_id)
+    print("Retrieved messages:")
+    for m in messages:
+        print(str(m[0]['content']))
+except Exception as e:
+    print(f"Error testing get_messages_by_session_id: {e}")

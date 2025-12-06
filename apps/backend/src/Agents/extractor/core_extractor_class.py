@@ -19,4 +19,3 @@ Thats about 36.8k usd
 Would this price range work for you" GIVE FALSE
 """)
     telegram : Optional[bool] = Field(description='True if user says or answers simmilar:  I do not have telegram , I have problems with telegram')
-

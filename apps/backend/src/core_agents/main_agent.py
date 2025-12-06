@@ -1,5 +1,14 @@
+from dotenv import load_dotenv 
+from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 import os
-from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate,ChatPromptTemplate
+
+OpenAPI = os.environ["OPEN_API_KEY"]
+openai_gpt5 = 'gpt-5'
+openai_gpt4_1='gpt-4.1'
+openai_gpt5mini='gpt-5-mini'
+alibaba_qwen_3max='qwen3-max'
+
+
 
 
 
@@ -47,8 +56,6 @@ Based on the above information, determine:
 input_variables=["last_message","watch_name", "budget", "message_type", "purchase_time"]
 )
 main_agent_prompt = ChatPromptTemplate.from_messages([
-    system_prompt,
-    user_prompt
+    ('system',system_prompt),
+    ('human',user_prompt)
 ])
-
-image_OCR_prompt = os.getenv('image_handler_prompt')

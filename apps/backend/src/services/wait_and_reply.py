@@ -18,7 +18,7 @@ def process_message_and_generate_reply(lead: Lead) -> None:
     print(f"Result: {value}")
     
     # Clear the DM after successful processing
-    print(f"✅ Processing complete for chat_id: {lead.chat_id}")
+    print(f" Processing complete for chat_id: {lead.chat_id}")
     clear_dm(lead.chat_id)
     
 

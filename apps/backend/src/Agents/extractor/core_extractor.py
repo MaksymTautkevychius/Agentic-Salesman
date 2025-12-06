@@ -2,12 +2,13 @@ from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
 from src.agents.extractor.core_extractor_class import CoreExtractor
 from langchain_core.output_parsers import PydanticOutputParser
+import os
 
 def extract_data(message: str, OCR_message: str)-> object:
     """
     Extracts parameters defined in the given class
     """
-    model = ChatOpenAI(model="gpt-4.1")
+    model = ChatOpenAI(model=os.getenv('core_extractor_model'))
     parser = PydanticOutputParser(pydantic_object=CoreExtractor)
     prompt = ChatPromptTemplate.from_messages([
         ("system", "Extract structured information from the user message."),
@@ -16,4 +17,4 @@ def extract_data(message: str, OCR_message: str)-> object:
     ]).partial(format_instructions=parser.get_format_instructions())
     chain = prompt | model | parser
     CoreExtractor = chain.invoke({"input_text": f"text message:{message}, product_on_image:{OCR_message}, chat_history:"})
-    return 
+    return CoreExtractor
