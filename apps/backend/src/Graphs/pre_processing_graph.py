@@ -13,7 +13,7 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 
-# Define processing functions
+
 def text_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
     """Text is already put in the needed state, this function created in case for needed changes in prompt"""
     return state
