@@ -9,7 +9,6 @@ llm=ChatOpenAI(temperature=0.2,model='gpt-4.1')
 
 
 load_dotenv()
-os.getenv('faq_prompt')
 
 
 prompt_path = os.getenv("name_prompt")
@@ -18,7 +17,7 @@ with open(prompt_path, "r", encoding="utf-8") as f:
     prompt_text = f.read()
 print(prompt_text)
 
-def name_agent_invoke(chatid: str, message : str, OCR_message :str):
+def name_agent_invoke(chatid: str, message : str):
 
     memory = AIMemoryManager(chatid)
     history_list = memory.get_messages_for_langchain()  
@@ -44,7 +43,7 @@ def name_agent_invoke(chatid: str, message : str, OCR_message :str):
     })
 
     ai_output = response.content if hasattr(response, "content") else response
-    #print(ai_output)
+    print(ai_output)
 
     memory.add_message("human", message)
     memory.add_message("ai", ai_output)

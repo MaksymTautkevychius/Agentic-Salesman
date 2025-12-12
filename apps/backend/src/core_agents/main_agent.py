@@ -12,7 +12,7 @@ alibaba_qwen_3max='qwen3-max'
 
 
 
-def main_agent_invoke(chatid:str, last_message: str):
+def main_agent_invoke(chatid: str, message : str, OCR_message :str):
 
     main_prompt_path = os.getenv("main_prompt")
     load_dotenv()
