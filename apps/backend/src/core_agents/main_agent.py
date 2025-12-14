@@ -2,13 +2,19 @@ from dotenv import load_dotenv
 from src.agents.memory_manager.chat_memory_history import AIMemoryManager
 from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate, ChatPromptTemplate
 from langchain_core.messages import AIMessage, HumanMessage
+from langchain_openai import ChatOpenAI
+from langchain.agents import create_agent
+from src.tools.watch_tool import find_and_download_watch
 import os
 
-OpenAPI = os.environ["OPEN_API_KEY"]
-openai_gpt5 = 'gpt-5'
-openai_gpt4_1='gpt-4.1'
-openai_gpt5mini='gpt-5-mini'
-alibaba_qwen_3max='qwen3-max'
+from dotenv import load_dotenv
+
+load_dotenv()
+
+OpenAPI = os.environ["OPENAI_API_KEY"]
+
+OpenAPI = os.environ["OPENAI_API_KEY"]
+llm = ChatOpenAI(temperature=0.2, model='gpt-4.1')
 
 
 
@@ -19,14 +25,8 @@ def main_agent_invoke(chatid: str, message : str, OCR_message :str):
     with open(main_prompt_path, "r", encoding="utf-8") as f:
         main_prompt = f.read()
 
-    memory = AIMemoryManager(chatid)
-    history_list = memory.get_messages_for_langchain()  
-    langchain_history = []
-    for role, content in history_list:
-        if role == "human":
-            langchain_history.append(HumanMessage(content=content))
-        else:
-            langchain_history.append(AIMessage(content=content))
+    memory= AIMemoryManager('123456789')
+    memory.get_conversation_buffer_memory()
 
     system_prompt = SystemMessagePromptTemplate.from_template(
        main_prompt
@@ -71,7 +71,19 @@ def main_agent_invoke(chatid: str, message : str, OCR_message :str):
     """,
     input_variables=["last_message","watch_name", "budget", "message_type", "purchase_time"]
     )
-    main_agent_prompt = ChatPromptTemplate.from_messages([
+    prompt = ChatPromptTemplate.from_messages([
         ('system',system_prompt),
         ('human',user_prompt)
     ])
+    agent= create_agent(
+        memory=memory,
+        llm=llm,
+        prompt=prompt,
+        tools=find_and_download_watch
+    )
+    response = agent.invoke({
+        "input": message,
+        "ocr_text": OCR_message
+    })
+    ai_output,image = response.content if hasattr(response, "content") else str(response)
+    return ai_output,image

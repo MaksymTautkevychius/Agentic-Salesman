@@ -217,3 +217,7 @@ apps/received_audio/
 #prompts
 extractor_prompt.txt
 image_handler_prompt.txt
+tool.txt
+name_prompt.txt
+main_prompt.txt
+faq_agent_prompt.txt

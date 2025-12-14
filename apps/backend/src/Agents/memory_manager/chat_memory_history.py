@@ -1,10 +1,14 @@
 from typing import Dict, List, Optional, Tuple, Any
 from datetime import datetime
 from threading import RLock, Thread
-import time
-import asyncio
+import time,asyncio
 from src.database.database import get_messages_by_session_id, add_message as db_add_message
-
+from langchain_classic.memory import ConversationBufferMemory
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+from langchain_core.chat_history import BaseChatMessageHistory
+from langchain_core.messages import BaseMessage, HumanMessage, AIMessage
+from typing import List
 
 memory_lock = RLock()
 cache_lock = RLock()
@@ -112,6 +116,28 @@ class AIMemoryManager:
             formatted.append(f"{role}: {msg['content']}")
         return "\n".join(formatted)
     
+    def get_conversation_buffer_memory(self):
+        history_list = self.get_messages_for_langchain()
+
+        langchain_messages = []
+        for role, content in history_list:
+            if role == "human":
+                langchain_messages.append(HumanMessage(content=content))
+            else:
+                langchain_messages.append(AIMessage(content=content))
+
+        memory = ConversationBufferMemory(
+            memory_key="chat_history",
+            return_messages=True,
+            input_key="input",
+            output_key="output"
+        )
+
+        for message in langchain_messages:
+            memory.chat_memory.add_message(message)
+        print(memory)
+        return memory
+    
 
 def cleanup_stale_sessions() -> int:
     with cache_lock:
@@ -185,7 +211,7 @@ def cache_maintenance_task():
     print("Cache maintenance task started")
     while True:
         try:
-            time.sleep(300)  # every 5 minutes
+            time.sleep(300)  
             cleanup_stale_sessions()
             enforce_cache_size_limit()
             sync_dirty_sessions()
@@ -198,21 +224,6 @@ def start_cache_maintenance_thread() -> Thread:
     t = Thread(target=cache_maintenance_task, daemon=True)
     t.start()
     return t
-
-
-
-async def handle_telegram_message_with_memory(chat_id: str, user_message: str) -> str:
-    memory = AIMemoryManager(str(chat_id))
-
-
-    await asyncio.to_thread(memory.add_message, "human", user_message)
-
-    context = await asyncio.to_thread(memory.get_context_window, 10)
-
-    ai_response = "This is a mock AI response"
-
-    await asyncio.to_thread(memory.add_message, "ai", ai_response)
-    return ai_response
 
 
 def example_usage():

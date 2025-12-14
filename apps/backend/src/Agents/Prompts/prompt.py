@@ -1,7 +1,9 @@
 import os
 from langchain_core.prompts import SystemMessagePromptTemplate, HumanMessagePromptTemplate,ChatPromptTemplate
 
-
+"""
+THIS PART OF CODE WILL BE DELETED, ALL PROMPT FILES WILL BE ADDED TO THE .giignore FILES AND DOWNLOADED IN THE .py FILES OF ITS FUNCTION
+"""
 
 system_prompt = SystemMessagePromptTemplate.from_template(
     os.getenv('main_prompt')
