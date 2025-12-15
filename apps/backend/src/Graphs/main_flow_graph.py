@@ -8,7 +8,7 @@ from src.agents.extractor import core_extractor
 from src.core_agents.faq_agent import faq_agent_invoke
 from src.core_agents.name_agent import name_agent_invoke
 from src.core_agents.main_agent import main_agent_invoke
-
+from src.telegram_handler.telegram_input_handler import send_message_sync,send_image_sync
 
 
 def extractor(state: MainAgentState):
@@ -27,20 +27,24 @@ def extractor(state: MainAgentState):
 
 def name_faq_agent(state: MainAgentState):
     state["response"] = name_agent_invoke(state["sessionid"],state["message"],state['history'])
+    send_message_sync(state['sessionid'],state["response"])
     return state
 
 def helper_agent(state: MainAgentState):
     state["response"] = faq_agent_invoke(state["sessionid"],state["message"],state['history'])
+    send_message_sync(state['sessionid'],state["response"])
     return state 
 
 
 def salesman_agent(state: MainAgentState):
-    state["response"], = "Prepared sales communication."
     return state
 
 
 def main_agent_graph_invoke(state: MainAgentState):
-    state["message"] = "Main Agent coordinating between agents."
+    state["response"],state["image_url"] = main_agent_invoke(state["sessionid"],state["message"],state["OCR_message"])
+    if state["image_url"]!=None:
+        send_image_sync(state['sessionid'],state["image_url"])
+    send_message_sync(state['sessionid'],state["response"])
     return state
 
 

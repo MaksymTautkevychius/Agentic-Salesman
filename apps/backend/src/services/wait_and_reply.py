@@ -3,6 +3,7 @@ from src.models.Lead import Type
 from src.models.DM.input import InputLevel
 from src.pre_processing.input_processing import add_input_to_dm, set_timeout_callback, clear_dm
 from src.graphs.pre_processing_graph import invoke_pre_processing
+from src.graphs.main_flow_graph import invoke_main_bot
 
 
 def process_message_and_generate_reply(lead: Lead) -> None:
@@ -13,11 +14,10 @@ def process_message_and_generate_reply(lead: Lead) -> None:
         print("Warning: Lead is None, skipping processing")
         return
     
-    value = invoke_pre_processing(lead)
-    print('finished invoke')
-    print(f"Result: {value}")
-    
-    # Clear the DM after successful processing
+    value,ocr_message = invoke_pre_processing(lead)
+    response,url= invoke_main_bot(value,ocr_message,lead.chat_id)
+    print(response,url)
+    print(f"Result: {value} and {ocr_message}")
     print(f" Processing complete for chat_id: {lead.chat_id}")
     clear_dm(lead.chat_id)
     

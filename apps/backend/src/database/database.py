@@ -134,27 +134,27 @@ def get_messages_by_session_id(session_id: str):
         print(f"Failed to retrieve messages: {e}")
         raise
 
+def example_database():     
+    test_session_id = "session_12345"
+    test_message = {
+        "role": "assistant",
+        "content": "Hello! This is a test message3"
+    }
 
-test_session_id = "session_12345"
-test_message = {
-    "role": "assistant",
-    "content": "Hello! This is a test message3"
-}
-
-try:
-    new_id = add_message(test_session_id, test_message)
-    print(f"Inserted new message with ID: {new_id}")
-except Exception as e:
-    print(f"Error testing add_message: {e}")
-
-
+    try:
+        new_id = add_message(test_session_id, test_message)
+        print(f"Inserted new message with ID: {new_id}")
+    except Exception as e:
+        print(f"Error testing add_message: {e}")
 
 
-test_session_id = "session_12345"  # Use an existing session_id in DB
-try:
-    messages = get_messages_by_session_id(test_session_id)
-    print("Retrieved messages:")
-    for m in messages:
-        print(str(m[0]['content']))
-except Exception as e:
-    print(f"Error testing get_messages_by_session_id: {e}")
+
+
+    test_session_id = "session_12345"  # Use an existing session_id in DB
+    try:
+        messages = get_messages_by_session_id(test_session_id)
+        print("Retrieved messages:")
+        for m in messages:
+            print(str(m[0]['content']))
+    except Exception as e:
+        print(f"Error testing get_messages_by_session_id: {e}")

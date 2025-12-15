@@ -1,9 +1,9 @@
 from langchain_community.utilities import SQLDatabase
+from langchain.tools import tool
 from langchain_community.agent_toolkits import create_sql_agent
 from langchain_anthropic import ChatAnthropic
 import time, re, os, requests
 from dotenv import load_dotenv
-from io import BytesIO
 
 load_dotenv()
 
@@ -20,7 +20,7 @@ llm = ChatAnthropic(
     model="claude-sonnet-4-5-20250929",
     temperature=0
 )
-
+@tool('Watch Tool')
 def find_and_download_watch(message: str):
     """
     Find the best matching watch and download its image to memory
@@ -33,7 +33,7 @@ def find_and_download_watch(message: str):
         db=db,
         agent_type="zero-shot-react-description",
         verbose=True,
-        handle_parsing_errors=True
+        handle_parsing_errors=True,
     )
     
     prompt_path = os.getenv("tool_prompt")
@@ -59,35 +59,19 @@ def find_and_download_watch(message: str):
         
         if url_match:
             image_url = url_match.group(1)
-            print(f"Found image URL: {image_url}")
             
-            try:
-                print(f"Downloading image to memory...")
-                img_response = requests.get(image_url, timeout=15)
-                img_response.raise_for_status()
-                
-                image_bytes = img_response.content
-                
-                return {
-                    "success": True,
-                    "watch_details": result_text,
-                    "image_url": image_url,
-                    "image_data": image_bytes,
-                    "message": "Watch found and image downloaded successfully!"
-                }
-            except Exception as e:
-                return {
-                    "success": False,
-                    "watch_details": result_text,
-                    "image_url": image_url,
-                    "image_data": None,
-                    "error": f"Found watch but failed to download image: {str(e)}"
-                }
+            img_response = requests.get(image_url, timeout=15)
+            img_response.raise_for_status()
+            
+            return {
+                "success": True,
+                "watch_details": result_text,
+                "image_url": image_url
+            }
         else:
             return {
                 "success": False,
                 "watch_details": result_text,
-                "image_data": None,
                 "error": "Found watch but no image URL in database"
             }
             
@@ -108,7 +92,6 @@ if __name__ == "__main__":
     print(f"\nResult: {result}")
     print(f"Search time: {elapsed:.2f} seconds\n")
     
-    # If you want to save the image from the result:
     if result.get("success") and result.get("image_data"):
         with open("RM.jpg", "wb") as f:
             f.write(result["image_data"])

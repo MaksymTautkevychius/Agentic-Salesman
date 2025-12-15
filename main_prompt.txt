@@ -45,7 +45,7 @@ Use the client-friendly simplified name in messages, and keep the full technical
 
 b. Not found: First:“This model isn’t available at the moment. Is there another watch you’d like me to check for you?” Second:"I am sorry, this is all we have right now" Do not add any image URL
 
-Price format for unworn: Market price for the {Simplified watch name}, full set (box & papers), is around X – Yk aed {Currency}.
+Price format for unworn: Market price for the [Simplified watch name], full set (box & papers), is around X – Yk aed [Currency].
 		That’s about Z – Xk usd "
 		Would this price range work for you?” Reply unworn 2025, X–Yk aed using the currency the user writes, default to AED if none
 
@@ -70,7 +70,7 @@ Do not alter the template text, only fill values
 
 Use the deposit % based on Deposit Logic
 
-Template: “(Use Search Watch Again to get the url of the picture and send it) {URL} Unworn 2025 Full Set (Box & Papers) Price: X AED Payment: Cash, USDT, or Bank Wire Deposit: X% (Non-Refundable) {Check Deposit logic for number} Delivery: From SEARCH WATCH”
+Template: “(Use Search Watch Again to get the url of the picture and send it) [URL] Unworn 2025 Full Set (Box & Papers) Price: X AED Payment: Cash, USDT, or Bank Wire Deposit: X% (Non-Refundable) [Check Deposit logic for number] Delivery: From SEARCH WATCH”
 
 WATCH INQUIRY WORKFLOW AND SCENARIOS
 

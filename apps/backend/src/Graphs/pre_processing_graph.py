@@ -4,15 +4,18 @@ from pathlib import Path
 from langgraph.graph import START, END, StateGraph
 from langchain_community.document_loaders import UnstructuredExcelLoader
 from langchain_community.chat_models.openai import ChatOpenAI
-from langchain_classic.schema import HumanMessage
+from langchain_classic.schema import HumanMessage,SystemMessage
 from src.graphs.pre_processing_agent_state import PreProcessingAgentState
 from src.models.Lead import Lead
 from src.models.DM.input import Type
-
+from dotenv import load_dotenv
+load_dotenv()
 project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-
+prompt_path = os.getenv("extractor_prompt")
+with open(prompt_path, "r", encoding="utf-8") as f:
+    extractor_prompt_text = f.read()
 
 def text_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
     """Text is already put in the needed state, this function created in case for needed changes in prompt"""
@@ -28,9 +31,8 @@ def photo_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
         state["OCR_message"] = "No image provided"
         return state
     
-    llm = ChatOpenAI(model="gpt-4o-mini")  # Changed model name
+    llm = ChatOpenAI(model="gpt-5",temperature=1)  
     
-    # Use file_path directly - don't concatenate with file_name
     file_path = state['image'].file_path
     print(f"Processing image at: {file_path}")
     
@@ -52,9 +54,15 @@ def photo_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
                 }
             ]
         )
-        state["OCR_message"] = llm.invoke([message]).content
-        print("Image processed successfully")
-        print(f"OCR Result: {state['OCR_message']}")
+        system_message = SystemMessage(
+                content=extractor_prompt_text
+        )
+        state["OCR_message"] = llm.invoke([
+    system_message,
+    message
+]).content
+       # print("Image processed successfully")
+       # print(f"OCR Result: {state['OCR_message']}")
     except FileNotFoundError as e:
         print(f"Error: Image file not found at {file_path}")
         state["OCR_message"] = f"Image file not found: {file_path}"
@@ -159,5 +167,6 @@ def invoke_pre_processing(lead: Lead) -> object:
     )
     if processor.pre_processing_graph_compiled is None:
         raise ValueError("Graph is not compiled. Call generate_pre_processing_graph() first")    
-    processor.pre_processing_graph_compiled.invoke(state)
-    return  state.get('message', 'none'), state.get('OCR_message', '')
+    final_state= processor.pre_processing_graph_compiled.invoke(state)
+    final_state = processor.pre_processing_graph_compiled.invoke(state)
+    return final_state.get('message',' '), final_state.get('OCR_message', '')

@@ -5,13 +5,13 @@ class MainAgentState(TypedDict, total=False):
     Budget: float
     Type: str
     message: str
+    image_url: str = None
     OCR_message: str
     sessionid: str
-    response :str
+    response : str
     is_watch_inquiry: bool
     time : str
     has_name : bool
     is_already_given : bool
     ready_to_purchase : bool
     history: List[Dict[str, str]]
-    

@@ -31,7 +31,6 @@ def set_timeout_callback(callback):
 
 def clear_dm(chat_id: str):
     """Clear all messages for a specific chat after processing"""
-    print(f"🧹 Clearing DM for chat_id: {chat_id}")
     if chat_id in DM_Level:
         DM_Level[chat_id] = DM(
             Lead=None,
@@ -41,7 +40,6 @@ def clear_dm(chat_id: str):
             dm4='',
             dm5=''
         )
-    # Also cancel any active timer
     cancel_timer(chat_id)
 
 
@@ -51,24 +49,19 @@ def on_timeout_expired(chat_id: str):
     
     dm = DM_Level.get(chat_id)
     if dm and dm.Lead:
-        # Clear the timer reference
         if chat_id in active_timers:
             del active_timers[chat_id]
         
-        # Trigger processing via callback
         if timeout_callback:
             timeout_callback(dm.Lead)
-            # Clear the DM after processing
             clear_dm(chat_id)
 
 
 def start_timer(chat_id: str):
     """Start a 30-second timer for this chat"""
-    # Cancel existing timer if any
     if chat_id in active_timers:
         active_timers[chat_id].cancel()
     
-    # Start new timer
     print(f"⏱️ Starting 30-second timer for chat_id: {chat_id}")
     timer = Timer(TIMEOUT_SECONDS, on_timeout_expired, args=[chat_id])
     timer.start()
@@ -78,7 +71,7 @@ def start_timer(chat_id: str):
 def cancel_timer(chat_id: str):
     """Cancel the timer for this chat"""
     if chat_id in active_timers:
-        print(f"🛑 Cancelling timer for chat_id: {chat_id}")
+        print(f" Cancelling timer for : {chat_id}")
         active_timers[chat_id].cancel()
         del active_timers[chat_id]
 
@@ -191,11 +184,11 @@ def check_message_state_text(chat_id: str) -> Lead:
     print("Has 5 messages?", has_five_messages)
 
     if is_first_message:
-        print("✅ First message - starting 30s timer")
+        print(" First message - starting 30s timer")
         start_timer(chat_id)
         return None  # Don't process yet, wait for timer or 5 messages
     elif has_five_messages:
-        print("✅ 5 messages reached - processing now!")
+        print(" 5 messages reached - processing now!")
         cancel_timer(chat_id)
         return dm.Lead
     else:
@@ -236,11 +229,11 @@ def check_message_state_image(chat_id: str) -> Lead:
     print("Has 5 messages?", has_five_messages)
 
     if is_first_message:
-        print("✅ First message - starting 30s timer")
+        print(" First message - starting 30s timer")
         start_timer(chat_id)
         return None  # Don't process yet, wait for timer or 5 messages
     elif has_five_messages:
-        print("✅ 5 messages reached - processing now!")
+        print(" 5 messages reached - processing now!")
         cancel_timer(chat_id)
         return dm.Lead
     else:

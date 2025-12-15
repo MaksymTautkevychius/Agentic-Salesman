@@ -1,59 +1,63 @@
+from dotenv import load_dotenv
+import os
+
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.messages import AIMessage, HumanMessage
 from langchain_openai import ChatOpenAI
+
 from src.agents.memory_manager.chat_memory_history import AIMemoryManager
-from dotenv import load_dotenv
-from langchain.agents import create_agent
-import os
+
+
+# ---------- Setup ----------
 
 load_dotenv()
 
-
-OpenAPI = os.environ["OPENAI_API_KEY"]
-llm = ChatOpenAI(temperature=0.2, model='gpt-4.1')
+llm = ChatOpenAI(
+    model="gpt-4.1",
+    temperature=0.2
+)
 
 prompt_path = os.getenv("name_prompt")
-
 with open(prompt_path, "r", encoding="utf-8") as f:
-    prompt_text = f.read()
+    system_prompt_text = f.read()
 
-print(prompt_text)
 
+# ---------- Agent ----------
 
 def name_agent_invoke(sessionid: str, message: str):
+
+    # Explicit memory
     memory = AIMemoryManager(sessionid)
     history_list = memory.get_messages_for_langchain()
 
-
-    langchain_history = []
+    # Convert to LangChain message objects
+    chat_history = []
     for role, content in history_list:
         if role == "human":
-            langchain_history.append(HumanMessage(content=content))
-        else: 
-            langchain_history.append(AIMessage(content=content))
+            chat_history.append(HumanMessage(content=content))
+        else:
+            chat_history.append(AIMessage(content=content))
 
+    # Prompt
     prompt = ChatPromptTemplate.from_messages([
-        ("system", prompt_text),
-        MessagesPlaceholder(variable_name="chat_history"),  
-        ("human", "{input}"),
+        ("system", system_prompt_text),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}")
     ])
 
-    memory= AIMemoryManager('123456789')
-    memory.get_conversation_buffer_memory()
+    # Stateless LCEL agent
+    agent = prompt | llm
 
-    agent= create_agent(
-        llm=llm,
-        prompt=prompt,
-        memory= memory
-    )
+    # Invoke
     response = agent.invoke({
-        "input": message,
-        "chat_history": langchain_history, 
+        "chat_history": chat_history,
+        "input": message
     })
 
-    ai_output = response.content if hasattr(response, "content") else str(response)
+    ai_output = response.content
 
+    # Save memory explicitly
     memory.add_message("human", message)
     memory.add_message("ai", ai_output)
-    
+
     return ai_output
