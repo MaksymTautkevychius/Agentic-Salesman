@@ -20,7 +20,7 @@ memory_cache: Dict[str, dict] = {}
 
 CACHE_TTL_SECONDS = 3600  # 1 hour
 MAX_CACHE_SIZE = 100      # Maximum number of sessions to cache
-MAX_MESSAGES_PER_SESSION = 40  # Match database limit
+MAX_MESSAGES_PER_SESSION = 40  # database limit
 
 class AIMemoryManager:
     def __init__(self, session_id: str):
@@ -208,7 +208,6 @@ def sync_dirty_sessions() -> int:
 
 
 def cache_maintenance_task():
-    print("Cache maintenance task started")
     while True:
         try:
             time.sleep(300)  

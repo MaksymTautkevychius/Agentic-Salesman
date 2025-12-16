@@ -26,11 +26,9 @@ with open(prompt_path, "r", encoding="utf-8") as f:
 
 def name_agent_invoke(sessionid: str, message: str):
 
-    # Explicit memory
     memory = AIMemoryManager(sessionid)
     history_list = memory.get_messages_for_langchain()
 
-    # Convert to LangChain message objects
     chat_history = []
     for role, content in history_list:
         if role == "human":
@@ -38,17 +36,13 @@ def name_agent_invoke(sessionid: str, message: str):
         else:
             chat_history.append(AIMessage(content=content))
 
-    # Prompt
     prompt = ChatPromptTemplate.from_messages([
         ("system", system_prompt_text),
         MessagesPlaceholder(variable_name="chat_history"),
         ("human", "{input}")
     ])
 
-    # Stateless LCEL agent
     agent = prompt | llm
-
-    # Invoke
     response = agent.invoke({
         "chat_history": chat_history,
         "input": message
@@ -56,7 +50,6 @@ def name_agent_invoke(sessionid: str, message: str):
 
     ai_output = response.content
 
-    # Save memory explicitly
     memory.add_message("human", message)
     memory.add_message("ai", ai_output)
 

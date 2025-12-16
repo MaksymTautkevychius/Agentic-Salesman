@@ -28,7 +28,6 @@ def test_extract_data():
     print("Testing extract_data function...")
     print("=" * 50)
     
-    # Example data
     message = "I want to buy 2 black iPhones with 256GB storage"
     
     ocr_message = "iPhone 15 Pro - $999.99 - Available in Black, Silver, Gold"

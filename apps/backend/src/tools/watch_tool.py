@@ -20,7 +20,7 @@ llm = ChatAnthropic(
     model="claude-sonnet-4-5-20250929",
     temperature=0
 )
-@tool('Watch Tool')
+@tool('WatchTool')
 def find_and_download_watch(message: str):
     """
     Find the best matching watch and download its image to memory

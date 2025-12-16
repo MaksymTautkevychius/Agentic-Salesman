@@ -34,7 +34,7 @@ def photo_processing(state: PreProcessingAgentState) -> PreProcessingAgentState:
     llm = ChatOpenAI(model="gpt-5",temperature=1)  
     
     file_path = state['image'].file_path
-    print(f"Processing image at: {file_path}")
+    print(f"Processing image  in pre_processing_graph: {file_path}")
     
     try:
         with open(file_path, "rb") as f:
@@ -167,6 +167,5 @@ def invoke_pre_processing(lead: Lead) -> object:
     )
     if processor.pre_processing_graph_compiled is None:
         raise ValueError("Graph is not compiled. Call generate_pre_processing_graph() first")    
-    final_state= processor.pre_processing_graph_compiled.invoke(state)
     final_state = processor.pre_processing_graph_compiled.invoke(state)
     return final_state.get('message',' '), final_state.get('OCR_message', '')

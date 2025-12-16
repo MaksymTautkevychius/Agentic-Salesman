@@ -25,14 +25,14 @@ with open(prompt_path, "r", encoding="utf-8") as f:
     system_prompt_text = f.read()
 
 
-# ---------- Agent ----------
 
 def faq_agent_invoke(sessionid: str, message: str, OCR_message: str) -> str:
 
 
     memory = AIMemoryManager(sessionid)
     history_list = memory.get_messages_for_langchain()
-
+    print("historylist")
+    print(history_list)
 
     chat_history = []
     for role, content in history_list:
@@ -50,6 +50,7 @@ def faq_agent_invoke(sessionid: str, message: str, OCR_message: str) -> str:
             "User Message: {input}\n\nOCR Extracted Text: {ocr_text}"
         )
     ])
+    print(prompt)
 
     agent = prompt | llm
 
