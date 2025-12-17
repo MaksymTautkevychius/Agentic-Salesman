@@ -40,7 +40,9 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print('clicked')
     user_text = update.message.text
     chat_id = update.effective_chat.id
-    
+    if chat_id==981594163 :
+        return
+        
     input_data = InputLevel(
         chat_id=chat_id,
         user_id=update.effective_user.id,
@@ -54,6 +56,8 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if chat_id==981594163 :
+        return
     """Handle photo messages with optional caption"""
     try:
         photo = update.message.photo[-1]
@@ -99,6 +103,8 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if chat_id==981594163 :
+        return
     """Handle voice messages (audio notes from Telegram)"""
     try:
         voice = update.message.voice

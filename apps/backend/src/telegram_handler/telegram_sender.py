@@ -5,7 +5,6 @@ from telegram import Bot
 from telegram.request import HTTPXRequest
 from dotenv import load_dotenv, find_dotenv
 
-# Load environment
 path = find_dotenv()
 load_dotenv(path)
 TOKEN = os.getenv("TelegramAPI")
@@ -67,3 +66,6 @@ def send_image_sync(chat_id: int, image_url: str, caption: str = None):
 
     thread = threading.Thread(target=run_async, daemon=True)
     thread.start()
+
+
+send_message_sync(981594163,'quit bitching')

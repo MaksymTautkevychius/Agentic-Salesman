@@ -221,3 +221,5 @@ tool.txt
 name_prompt.txt
 main_prompt.txt
 faq_agent_prompt.txt
+banlist.txt
+blocked_chats.txt
