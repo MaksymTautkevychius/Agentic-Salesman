@@ -1,188 +1,100 @@
 from dotenv import load_dotenv
 import os
-from typing import Optional
-from pydantic import BaseModel, Field
+import getpass
 
-from langchain_openai import ChatOpenAI
 from langchain_qwq import ChatQwen
 from langchain_core.prompts import (
-    SystemMessagePromptTemplate,
-    HumanMessagePromptTemplate,
-    ChatPromptTemplate
+    ChatPromptTemplate,
+    MessagesPlaceholder
 )
+from langchain_classic.agents import AgentExecutor, create_tool_calling_agent
+from langchain_classic.memory import ConversationBufferMemory
 
-from src.agents.memory_manager.chat_memory_history import AIMemoryManager
-from src.tools.watch_tool import find_and_download_watch
-import getpass
-import os
+from src.tools.watch_tool import WatchTool
+
+load_dotenv()
 
 if not os.getenv("DASHSCOPE_API_KEY"):
     os.environ["DASHSCOPE_API_KEY"] = getpass.getpass("Enter your Dashscope API key: ")
 
-load_dotenv()
-
 llm = ChatQwen(
     model="qwen3-max",
     temperature=0.2,
-    reasoning_effort='high'
+    reasoning_effort="high"
 )
 
+class SessionMemoryManager:
+    def __init__(self):
+        self._memories = {}
 
-class StructuredMainOutput(BaseModel):
-    response: str = Field(description="Response for the user")
-    image_url: Optional[str] = Field(
-        description="Image URL if watch found",
-        default=None
-    )
+    def get_memory(self, sessionid: str):
+        if sessionid not in self._memories:
+            self._memories[sessionid] = ConversationBufferMemory(
+                memory_key="chat_history",
+                return_messages=True,
+                input_key="input",
+                output_key="output"
+            )
+        return self._memories[sessionid]
 
+memory_manager = SessionMemoryManager()
 
-def main_agent_invoke(sessionid: str, message: str, OCR_message: str):
-    """
-    Main agent with proper tool integration.
-    First tries to use tools, then formats response.
-    """
-    
-    # Load system prompt
+def main_agent_invoke(sessionid: str, message: str, OCR_message: str = ""):
+    print(f"Starting agent for session: {sessionid}")
+
     main_prompt_path = os.getenv("main_prompt")
     with open(main_prompt_path, "r", encoding="utf-8") as f:
         system_prompt_text = f.read()
 
-    memory = AIMemoryManager(sessionid)
-    chat_history = memory.get_conversation_buffer_memory()
-
-    # System prompt
-    system_prompt = SystemMessagePromptTemplate.from_template(
-        system_prompt_text
-    )
-
-    human_prompt = HumanMessagePromptTemplate.from_template(
-        """
-        CONVERSATION HISTORY
-        {chat_history}
-
-        USER MESSAGE
-        {last_message}
-
-        OCR TEXT
-        {ocr_text}
-
-        EXTRACTED INFORMATION
-        Watch Name/Details: {watch_name}
-        Budget Mentioned: {budget}
-        Message Type: {message_type}
-        Purchase Timing: {purchase_time}
-
-        RESPONSE REQUIREMENTS
-        Respond as Adam using the System Prompt rules
-        Follow the flow sequence (0→1→2→3→4)
-        
-        TOOL USAGE:
-        - If you have enough info about the watch model, USE the find_and_download_watch tool
-        - The tool will search inventory and return an image if available
-        - Only use the tool when you know the specific model/reference
-        
-        Keep responses short and WhatsApp-casual
-        Ask ONLY ONE question
-        Never mention tools, databases, or being AI
-        No markdown, no emojis
-        """
-    )
+    memory = memory_manager.get_memory(sessionid)
 
     prompt = ChatPromptTemplate.from_messages([
-        system_prompt,
-        human_prompt
+        ("system", system_prompt_text + """
+
+IMPORTANT TOOL USAGE RULES
+- If you know the specific watch model or reference, CALL WatchTool
+- When calling WatchTool, ALWAYS pass:
+  watch_name = concise watch reference string
+- Never explain the tool call
+- Never mention databases or AI
+"""),
+        MessagesPlaceholder(variable_name="chat_history"),
+        ("human", "{input}"),
+        MessagesPlaceholder(variable_name="agent_scratchpad"),
     ])
 
-    # Step 1: Agent WITH tools (can make tool calls)
-    agent_with_tools = prompt | llm.bind_tools([find_and_download_watch])
+    tools = [WatchTool]
 
-    # Invoke with tool capability
-    input_data = {
-        "chat_history": chat_history,
-        "last_message": message,
-        "ocr_text": OCR_message,
-        "watch_name": "",
-        "budget": "",
-        "message_type": "text",
-        "purchase_time": ""
-    }
-    
-    print("🤖 Invoking agent with tools...")
-    result = agent_with_tools.invoke(input_data)
-    
-    # Step 2: Check if tool was called
+    agent = create_tool_calling_agent(
+        llm=llm,
+        tools=tools,
+        prompt=prompt
+    )
+
+    agent_executor = AgentExecutor(
+        agent=agent,
+        tools=tools,
+        memory=memory,
+        verbose=True,
+        handle_parsing_errors=True,
+        max_iterations=3,
+        return_intermediate_steps=True
+    )
+
+    full_message = message
+    if OCR_message:
+        full_message += f"\n\nOCR TEXT:\n{OCR_message}"
+
+    result = agent_executor.invoke({
+        "input": full_message
+    })
+
+    final_response = result.get("output", "")
     image_url = None
-    final_response = None
-    
-    if hasattr(result, 'tool_calls') and result.tool_calls:
-        print(f"🔧 Tool called: {len(result.tool_calls)} tool(s)")
-        
-        # Execute each tool call
-        for tool_call in result.tool_calls:
-            print(f"   Tool: {tool_call['name']}")
-            print(f"   Args: {tool_call['args']}")
-            
-            if tool_call['name'] == 'find_and_download_watch':
-                # Execute the tool
-                tool_result = find_and_download_watch.invoke(tool_call['args'])
-                print(f"   Result: {tool_result}")
-                
-                # Extract image URL if present
-                if isinstance(tool_result, dict) and 'image_url' in tool_result:
-                    image_url = tool_result['image_url']
-                elif isinstance(tool_result, str):
-                    # Tool might return URL directly or message
-                    if tool_result.startswith('http'):
-                        image_url = tool_result
-        
-        # Step 3: Generate response WITH tool results
-        print("💬 Generating response with tool results...")
-        
-        response_prompt = ChatPromptTemplate.from_messages([
-            system_prompt,
-            HumanMessagePromptTemplate.from_template(
-                """
-                CONVERSATION HISTORY
-                {chat_history}
 
-                USER MESSAGE
-                {last_message}
+    for action, observation in result.get("intermediate_steps", []):
+        if action.tool == "WatchTool":
+            if isinstance(observation, dict):
+                image_url = observation.get("image_url")
 
-                TOOL RESULTS
-                Image URL: {tool_image_url}
-                
-                Generate a natural response mentioning you found the watch.
-                Keep it short and casual.
-                Don't mention using tools or database.
-                """
-            )
-        ])
-        
-        response_agent = response_prompt | llm.with_structured_output(StructuredMainOutput)
-        
-        structured_result = response_agent.invoke({
-            "chat_history": chat_history,
-            "last_message": message,
-            "tool_image_url": image_url or "Not found"
-        })
-        
-        final_response = structured_result.response
-        if image_url is None:
-            image_url = structured_result.image_url
-    
-    else:
-        print("❌ No tools called - generating conversational response")
-        # No tool call, just use the content
-        if hasattr(result, 'content'):
-            final_response = result.content
-        else:
-            final_response = str(result)
-    
-    # Save to memory
-    memory.add_message("human", message)
-    memory.add_message("ai", final_response)
-    
-    print(f"📤 Response: {final_response}")
-    print(f"🖼️  Image URL: {image_url}")
-    
     return final_response, image_url

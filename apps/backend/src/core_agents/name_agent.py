@@ -8,12 +8,11 @@ from langchain_openai import ChatOpenAI
 from src.agents.memory_manager.chat_memory_history import AIMemoryManager
 
 
-# ---------- Setup ----------
 
 load_dotenv()
 
 llm = ChatOpenAI(
-    model="gpt-4.1",
+    model="gpt-4.1-mini",
     temperature=0.2
 )
 
@@ -21,8 +20,6 @@ prompt_path = os.getenv("name_prompt")
 with open(prompt_path, "r", encoding="utf-8") as f:
     system_prompt_text = f.read()
 
-
-# ---------- Agent ----------
 
 def name_agent_invoke(sessionid: str, message: str):
 

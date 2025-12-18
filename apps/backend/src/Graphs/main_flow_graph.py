@@ -17,7 +17,6 @@ def extractor(state: MainAgentState):
     data = core_extractor.extract_data(state["message"], state["OCR_message"], state['history'])
     print('extractor')
     print('===================')
-    print(data)
     print('===================')
     return {
         **state,
@@ -34,7 +33,6 @@ def extractor(state: MainAgentState):
 def name_faq_agent(state: MainAgentState):
     print('inside name')
     state["response"] = name_agent_invoke(state["sessionid"], state["message"])
-    send_message_sync(state['sessionid'], state["response"])
     return state
 
 

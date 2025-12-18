@@ -35,13 +35,29 @@ AUDIO_DIR.mkdir(exist_ok=True)
 _bot_app = None
 
 
+async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+        username = update.effective_user.username or update.effective_user.first_name or "there"
+
+        welcome_message = (
+            f"Hi {username}! 👋\n\n"
+            f"Welcome to BigMoe Watches!\n\n"
+            f"I'm Adam, your luxury watch specialist. "
+            f"I can help you find and source the perfect timepiece.\n\n"
+            f"Just send me:\n"
+            f"• The watch name or model you're looking for\n"
+            f"• A photo of the watch\n"
+            f"• Any questions about our service\n\n"
+            f"Let's find your dream watch!"
+        )
+
+        await update.message.reply_text(welcome_message)
+
+
 async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle text messages"""
     print('clicked')
     user_text = update.message.text
     chat_id = update.effective_chat.id
-    if chat_id==981594163 :
-        return
         
     input_data = InputLevel(
         chat_id=chat_id,
@@ -56,8 +72,6 @@ async def handle_text(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 
 async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    if chat_id==981594163 :
-        return
     """Handle photo messages with optional caption"""
     try:
         photo = update.message.photo[-1]
@@ -100,6 +114,9 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Error handling photo using telegram bot: {e}")
         import traceback
         traceback.print_exc()
+
+
+    
 
 
 async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -148,6 +165,7 @@ def start_telegram_bot():
     _bot_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_text))
     _bot_app.add_handler(MessageHandler(filters.PHOTO, handle_photo))
     _bot_app.add_handler(MessageHandler(filters.VOICE, handle_voice))
+    _bot_app.add_handler(CommandHandler("start",start_command))
     
     print(f"Telegram Bot '{TelegramBotName}' started")
     print(f"Photos directory: {PHOTOS_DIR.absolute()}")

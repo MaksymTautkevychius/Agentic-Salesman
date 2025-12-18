@@ -8,12 +8,10 @@ from langchain_openai import ChatOpenAI
 from src.agents.memory_manager.chat_memory_history import AIMemoryManager
 
 
-# ---------- Setup ----------
-
 load_dotenv()
 
 llm = ChatOpenAI(
-    model="gpt-4.1",
+    model="gpt-4.1-mini",
     temperature=0.2
 )
 
@@ -31,8 +29,6 @@ def faq_agent_invoke(sessionid: str, message: str, OCR_message: str) -> str:
 
     memory = AIMemoryManager(sessionid)
     history_list = memory.get_messages_for_langchain()
-    print("historylist")
-    print(history_list)
 
     chat_history = []
     for role, content in history_list:
@@ -61,7 +57,6 @@ def faq_agent_invoke(sessionid: str, message: str, OCR_message: str) -> str:
     })
 
     ai_output = response.content
-
 
     memory.add_message("human", message)
     memory.add_message("ai", ai_output)

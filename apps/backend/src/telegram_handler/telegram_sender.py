@@ -66,6 +66,3 @@ def send_image_sync(chat_id: int, image_url: str, caption: str = None):
 
     thread = threading.Thread(target=run_async, daemon=True)
     thread.start()
-
-
-send_message_sync(981594163,'quit bitching')
