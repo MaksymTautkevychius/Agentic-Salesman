@@ -4,14 +4,14 @@ from src.graphs.main_flow_graph import generate_main_bot_graph
 from src.core_agents.main_agent import main_agent_invoke
 import time
 
-# from src.agents.extractor.core_extractor import test_extract_data
+from src.agents.extractor.core_extractor import test_extract_data
 # from src.agents.memory_manager.chat_memory_history import AIMemoryManager
 # from src.core_agents.faq_agent import faq_agent_invoke
 # from src.core_agents.main_agent import main_agent_invoke
 # from src.core_agents.name_agent import name_agent_invoke
 
 if __name__ == "__main__":
-    # test_extract_data()
+    test_extract_data()
     # example_usage()
     # print(faq_agent_invoke('123456789',"I want newest Golden rolex","Rolex"))
     # print(name_agent_invoke('123456789',"I want newest Golden rolex"))

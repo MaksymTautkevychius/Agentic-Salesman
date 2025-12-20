@@ -9,7 +9,7 @@ from src.core_agents.faq_agent import faq_agent_invoke
 from src.core_agents.name_agent import name_agent_invoke
 from src.core_agents.main_agent import main_agent_invoke
 
-# Import from the new separate sender module instead of telegram_input_handler
+
 from src.telegram_handler.telegram_sender import send_message_sync, send_image_sync
 
 
@@ -25,7 +25,7 @@ def extractor(state: MainAgentState):
         "is_watch_inquiry": data.get("is_watch_inquiry"),
         "has_name": data.get("has_name"),
         "time": data.get("time"),
-        "is_already_given": data.get("is_already_given: "),
+        "is_already_given": data.get("is_already_given"),
         "ready_to_purchase": data.get("ready_to_purchase")
     }
 
