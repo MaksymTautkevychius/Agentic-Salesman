@@ -20,7 +20,7 @@ active_timers: dict[str, Timer] = {}
 """Callback function to be set from wait_and_reply"""
 timeout_callback = None
 
-TIMEOUT_SECONDS = 10
+TIMEOUT_SECONDS = 2
 
 
 def set_timeout_callback(callback):
@@ -45,7 +45,7 @@ def clear_dm(chat_id: str):
 
 def on_timeout_expired(chat_id: str):
     """Called when the timer expires"""
-    print(f"⏰ Timeout expired for chat_id: {chat_id} - processing messages now")
+    print(f" Timeout expired for chat_id: {chat_id} - processing messages now")
     
     dm = DM_Level.get(chat_id)
     if dm and dm.Lead:
@@ -62,7 +62,7 @@ def start_timer(chat_id: str):
     if chat_id in active_timers:
         active_timers[chat_id].cancel()
     
-    print(f"⏱️ Starting {TIMEOUT_SECONDS}-second timer for chat_id: {chat_id}")
+    print(f"⏱ Starting {TIMEOUT_SECONDS}-second timer for chat_id: {chat_id}")
     timer = Timer(TIMEOUT_SECONDS, on_timeout_expired, args=[chat_id])
     timer.start()
     active_timers[chat_id] = timer
@@ -71,7 +71,7 @@ def start_timer(chat_id: str):
 def cancel_timer(chat_id: str):
     """Cancel the timer for this chat"""
     if chat_id in active_timers:
-        print(f"❌ Cancelling timer for: {chat_id}")
+        print(f" Cancelling timer for: {chat_id}")
         active_timers[chat_id].cancel()
         del active_timers[chat_id]
 
@@ -81,16 +81,15 @@ def add_input_to_dm(input: InputLevel) -> Lead:
     Add input to DM buffer and check if processing should be triggered.
     Returns Lead only when 5 messages are reached or timer expires.
     """
-    print(f"📥 Adding message type: {input.type}")
+    print(f" Adding message type: {input.type}")
     dm_exists(input.chat_id)
     
     if input.type == Type.TEXT:
         lead = add_dm_text(input)
-        # Check if we should process now
         should_process = check_message_state_text(lead.chat_id)
         if should_process:
-            return lead  # Only return when 5 messages reached
-        return None  # Otherwise return None, wait for timer
+            return lead  
+        return None  
     elif input.type == Type.IMAGE:
         lead = add_dm_image(input)
         should_process = check_message_state_image(lead.chat_id)
@@ -166,17 +165,17 @@ def check_message_state_text(chat_id: str) -> bool:
     """
     dm = DM_Level.get(chat_id)
     if not dm:
-        print(f"❌ No DM found for chat_id: {chat_id}")
+        print(f" No DM found for chat_id: {chat_id}")
         return False
     
-    print(f"📊 Checking state for chat_id: {chat_id}")
+    print(f" Checking state for chat_id: {chat_id}")
     DM1 = dm.dm1
     DM2 = dm.dm2
     DM3 = dm.dm3
     DM4 = dm.dm4
     DM5 = dm.dm5
     
-    # Count non-empty messages
+
     message_count = sum([
         bool(DM1 and DM1 != ""),
         bool(DM2 and DM2 != ""),
@@ -187,23 +186,23 @@ def check_message_state_text(chat_id: str) -> bool:
     
     print(f"📝 Message count: {message_count}/5")
     
-    # First message: start timer
+
     if message_count == 1:
-        print("✅ First message - starting timer")
+        print(" First message - starting timer")
         start_timer(chat_id)
-        return False  # Don't process yet
+        return False  
     
-    # Messages 2-4: just wait
+
     elif message_count < 5:
-        print(f"⏳ Message {message_count} added to batch - waiting...")
-        # Timer is already running from first message
-        return False  # Don't process yet
-    
-    # Fifth message: process immediately
+        print(f" Message {message_count} added to batch - waiting...")
+
+        return False  
+
+
     elif message_count == 5:
-        print("🎯 5 messages reached - processing immediately!")
+        print(" 5 messages reached - processing immediately!")
         cancel_timer(chat_id)
-        return True  # Process now!
+        return True 
     
     return False
 
@@ -216,17 +215,16 @@ def check_message_state_image(chat_id: str) -> bool:
     """
     dm = DM_Level.get(chat_id)
     if not dm:
-        print(f"❌ No DM found for chat_id: {chat_id}")
+        print(f" No DM found for chat_id: {chat_id}")
         return False
     
-    print(f"📊 Checking image state for chat_id: {chat_id}")
+    print(f" Checking image state for chat_id: {chat_id}")
     DM1 = dm.dm1
     DM2 = dm.dm2
     DM3 = dm.dm3
     DM4 = dm.dm4
     DM5 = dm.dm5
     
-    # Count non-empty messages
     message_count = sum([
         bool(DM1 and DM1 != ""),
         bool(DM2 and DM2 != ""),
@@ -237,20 +235,18 @@ def check_message_state_image(chat_id: str) -> bool:
     
     print(f"📝 Image message count: {message_count}/5")
     
-    # First message: start timer
+
     if message_count == 1:
-        print("✅ First image message - starting timer")
+        print(" First image message - starting timer")
         start_timer(chat_id)
         return False
     
-    # Messages 2-4: just wait
     elif message_count < 5:
-        print(f"⏳ Image message {message_count} added - waiting...")
+        print(f" Image message {message_count} added - waiting...")
         return False
-    
-    # Fifth message: process immediately
+
     elif message_count == 5:
-        print("🎯 5 image messages reached - processing immediately!")
+        print(" 5 image messages reached - processing immediately!")
         cancel_timer(chat_id)
         return True
     

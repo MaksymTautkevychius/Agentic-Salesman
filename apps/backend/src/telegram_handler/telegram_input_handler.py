@@ -39,15 +39,14 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         username = update.effective_user.username or update.effective_user.first_name or "there"
 
         welcome_message = (
-            f"Hi {username}! 👋\n\n"
-            f"Welcome to BigMoe Watches!\n\n"
+            f"Hi {username}! \n\n"
+            f"Welcome to Our Shop Helper!\n\n"
             f"I'm Adam, your luxury watch specialist. "
             f"I can help you find and source the perfect timepiece.\n\n"
             f"Just send me:\n"
-            f"• The watch name or model you're looking for\n"
+            f"• Your name \n"
             f"• A photo of the watch\n"
             f"• Any questions about our service\n\n"
-            f"Let's find your dream watch!"
         )
 
         await update.message.reply_text(welcome_message)

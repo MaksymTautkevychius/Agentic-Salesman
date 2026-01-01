@@ -46,7 +46,7 @@ def faq_agent_invoke(sessionid: str, message: str, OCR_message: str) -> str:
             "User Message: {input}\n\nOCR Extracted Text: {ocr_text}"
         )
     ])
-    print(prompt)
+    #print(prompt)
 
     agent = prompt | llm
 

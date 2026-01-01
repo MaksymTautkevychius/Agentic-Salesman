@@ -5,8 +5,11 @@ import os
 class CoreExtractor(BaseModel):
     name :  Optional[str] = Field(description='Extract the actual customer name if provided')
     budget_amount : Optional[str] = Field(description='Extract the budget amount or range if provided Example: 50k, 25-30k, $50000')
-    is_watch_inquiry: Optional[bool] = Field(description='True if user is asking about a specific watch, price, or showing watch image')
-    has_name:  Optional[bool] =  Field(description='True if user provided their actual name (not just [sure], [ok] or non-name responses)')
+    is_watch_inquiry: bool= Field(description='True if user is asking about a specific watch, price, or showing watch image')
+    has_name: bool = Field(
+    default=False,
+    description="True if user has provided their real name at any point in the conversation"
+    )
     time : Optional[str] = Field(description='Time when User want to buy the Watch ASAP/in a few Weeks/Now e.t.c.')
     is_already_given: bool = Field(
     default=False,

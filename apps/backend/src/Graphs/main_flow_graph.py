@@ -14,19 +14,19 @@ from src.telegram_handler.telegram_sender import send_message_sync, send_image_s
 
 
 def extractor(state: MainAgentState):
-    data = core_extractor.extract_data(state["message"], state["OCR_message"], state['history'])
-    print('extractor')
-    print('===================')
-    print('===================')
+    data = core_extractor.extract_data(
+        state["message"],
+        state["OCR_message"],
+        state["history"]
+    )
+
     return {
         **state,
-        "name": data.get("name"),
-        "Budget": data.get("budget_amount"),
+        "name": state.get("name") or data.get("name"),
+        "has_name": state.get("has_name") or data.get("has_name", False),
         "is_watch_inquiry": data.get("is_watch_inquiry"),
-        "has_name": data.get("has_name"),
+        "Budget": data.get("budget_amount"),
         "time": data.get("time"),
-        "is_already_given": data.get("is_already_given"),
-        "ready_to_purchase": data.get("ready_to_purchase")
     }
 
 
@@ -69,17 +69,22 @@ def memory_manager(state: MainAgentState):
 
 
 def main_router(state: MainAgentState) -> str:
-    """
-    Route logic after Extractor:
-    Choose which agent to activate next based on the stage
-    """
-    if state["has_name"] == False:
-        print('faq_route')
-        return "faq_route"
-    if state["is_watch_inquiry"] == False:
-        return "helper_route"
-    else:
+    print("stage:", state.get("stage"))
+    print("is_watch_inquiry:", state.get("is_watch_inquiry"))
+
+    if state.get("is_watch_inquiry"):
+        state["stage"] = "main"
         return "sales_route"
+
+    if state.get("stage") == "name":
+        return "helper_route"
+
+    if state.get("stage") == "faq":
+        return "helper_route"
+
+    return "sales_route"
+
+
 
 
 class MainBotPipeline:
@@ -138,14 +143,15 @@ def generate_main_bot_graph():
 def invoke_main_bot(_message: str, OCR_message: str, sessionid: str) -> object:
     """Invoke the pre-processing graph and return the final state"""
     state = MainAgentState(
-        name='',
-        WatchName='',
-        Budget='',
-        Type='',
-        message=_message,
-        sessionid=sessionid,
-        OCR_message=OCR_message
-    )
+    name='',
+    WatchName='',
+    Budget='',
+    Type='',
+    message=_message,
+    sessionid=sessionid,
+    OCR_message=OCR_message,
+    stage="name"  
+)
     
     if processor.main_graph_compiled is None:
         raise ValueError("Graph is not compiled. Call generate_main_bot() first")
