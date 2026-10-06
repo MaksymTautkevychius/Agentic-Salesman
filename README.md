@@ -9,7 +9,7 @@
 ![Telegram](https://img.shields.io/badge/Telegram-Bot%20API-26A5E4?logo=telegram&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green)
 
-> 📄 **Not technical?** Read the [Product Overview](docs/PRODUCT.md) for the business problem, the customer journey, and what this project demonstrates.
+> 📄 **Not technical?** Read the [Product Overview](PRODUCT.md) for the business problem, the customer journey, and what this project demonstrates.
 
 ---
 
